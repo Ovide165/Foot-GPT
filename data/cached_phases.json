@@ -1,0 +1,130 @@
+{
+  "3869685": [
+    {
+      "minute_start": 0,
+      "minute_end": 40,
+      "name": "Scaloni High Press",
+      "description": "Argentina suffocates French build-up, resulting in 0 shots for France and repeated turnovers in their own half."
+    },
+    {
+      "minute_start": 40,
+      "minute_end": 70,
+      "name": "France Direct Shift",
+      "description": "France switches to a direct 4-2-4 after double substitutions (Giroud/Dembélé OUT), trying to bypass Argentina's press."
+    },
+    {
+      "minute_start": 70,
+      "minute_end": 85,
+      "name": "Mbappé Revival",
+      "description": "France reverses momentum with Camavinga and Coman, and Mbappé scores twice in 97 seconds."
+    },
+    {
+      "minute_start": 85,
+      "minute_end": 90,
+      "name": "Chaos & Transition",
+      "description": "High-tempo transitions and broken defensive structures as regular time draws to a close."
+    },
+    {
+      "minute_start": 90,
+      "minute_end": 120,
+      "name": "Extra Time Pivots",
+      "description": "Tactical adjustments, Messi and Mbappé goals, and decisive saves in the final minutes."
+    }
+  ],
+  "3869684": [
+    {
+      "minute_start": 0,
+      "minute_end": 45,
+      "name": "Croatia Early Press",
+      "description": "Croatia opens with a high‑pressing 4‑3‑3, exploiting the early 0‑10 minute xG advantage (0.15 vs 0.42) and scoring at 6:28. The team maintains pressure, forcing Morocco into defensive positions until the 45th minute."
+    },
+    {
+      "minute_start": 45,
+      "minute_end": 55,
+      "name": "Morocco Defensive Restructure",
+      "description": "At 45 minutes, Morocco introduces Ilias Chair, shifting to a more compact 4‑4‑2. The change reduces Croatia’s attacking threat, reflected in the 40‑50 minute bin where Croatia’s xG drops to 0.06 and Morocco’s shots remain low."
+    },
+    {
+      "minute_start": 55,
+      "minute_end": 61,
+      "name": "Croatia Attacking Shift",
+      "description": "Croatia brings in Nikola Vlašić at 61 minutes, switching to a 4‑2‑3‑1 that increases creative options. The team regains the lead at 41:43 and continues to press, with the 70‑80 minute bin showing balanced shots from both sides."
+    },
+    {
+      "minute_start": 61,
+      "minute_end": 66,
+      "name": "Mid‑Game Tactical Exchange",
+      "description": "Both sides make rapid changes (Croatia’s 66‑minute substitutions and Morocco’s 63‑minute changes). The match enters a high‑intensity phase where Croatia holds the lead while Morocco pushes for an equaliser, as seen in the 60‑70 minute bin where Morocco’s xG rises to 0.07."
+    },
+    {
+      "minute_start": 66,
+      "minute_end": 96,
+      "name": "Late Game Defensive Consolidation",
+      "description": "From 66 to 96 minutes, Croatia adopts a 4‑4‑2 defensive shape after heavy substitutions, while Morocco continues to attack. The final 90‑100 minute bin shows Morocco’s increased shot volume (2 shots, 0.14 xG) as they seek a late goal, culminating in Croatia’s last‑minute substitution at 94."
+    }
+  ],
+  "3869552": [
+    {
+      "minute_start": 0,
+      "minute_end": 20,
+      "name": "France Early Pressure",
+      "description": "France open the match with high pressing and quick transitions, generating a superior xG (0.19 vs 0.02) and creating the opening goal at 4:40. Morocco retains its starting XI and is largely on the back foot."
+    },
+    {
+      "minute_start": 20,
+      "minute_end": 45,
+      "name": "France Dominance Pre‑Half‑Time",
+      "description": "France maintain territorial control and shot volume, especially in the 30‑40 minute window (6 shots, 0.65 xG). Morocco’s first substitution at 20 (Saïss → Amallah) does not alter the balance; France continues to dictate play."
+    },
+    {
+      "minute_start": 45,
+      "minute_end": 66,
+      "name": "Tactical Adjustments After Break",
+      "description": "Both coaches react at the interval: Morocco brings on Attiyat‑allah for Mazraoui (45) to reinforce the midfield, while France replaces Giroud with Thuram (64) to add pace on the flank. Morocco also swaps En‑Nesyri and Boufal (65‑66) seeking more attacking options. Shot activity drops as both sides reorganise."
+    },
+    {
+      "minute_start": 66,
+      "minute_end": 78,
+      "name": "France Attacking Surge",
+      "description": "The double substitution period (Morocco → Ezzalzouli at 77, France → Muani at 78) triggers a French attacking thrust. France’s xG spikes to 1.04 in the 70‑80 bin, culminating in Muani’s second‑half goal at 78:49. Morocco’s changes fail to generate clear chances."
+    },
+    {
+      "minute_start": 78,
+      "minute_end": 95,
+      "name": "Late‑Game Defensive Phase",
+      "description": "Holding a 2‑0 lead, France adopts a compact defensive block, limiting Morocco to a single shot in the 80‑90 bin and none thereafter. Morocco, forced to chase, increases volume in the final minutes (5 shots, 0.74 xG in the 90‑100 bin) but cannot break through."
+    }
+  ],
+  "3857276": [
+    {
+      "minute_start": 0,
+      "minute_end": 20,
+      "name": "Morocco Early Pressure",
+      "description": "Morocco dominated the opening minutes with high shot volume and superior xG, forcing Canada into a defensive posture."
+    },
+    {
+      "minute_start": 20,
+      "minute_end": 30,
+      "name": "Morocco Offensive Surge",
+      "description": "The first half saw Morocco score twice, maintaining pressure and exploiting Canada's defensive gaps."
+    },
+    {
+      "minute_start": 30,
+      "minute_end": 60,
+      "name": "Canada Mid-Match Build",
+      "description": "After the early deficit, Canada began to build play, making substitutions to reinforce midfield and create chances, though output remained limited."
+    },
+    {
+      "minute_start": 60,
+      "minute_end": 80,
+      "name": "Canada Attacking Shift",
+      "description": "With fresh legs, Canada increased attacking intensity, reflected in a sharp rise in shots and xG during the 70‑80 minute bin."
+    },
+    {
+      "minute_start": 80,
+      "minute_end": 93,
+      "name": "Morocco Defensive Adjustment",
+      "description": "Late‑match substitutions for Morocco aimed to shore up defense, while Canada continued to press, but the game remained largely unchanged until the final whistle."
+    }
+  ]
+}

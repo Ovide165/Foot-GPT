@@ -1,0 +1,1087 @@
+/* ==============================================================================
+   FOOT-GPT : DESIGN SYSTEM "PRO SPORTS ANALYTICS" (EDITORIAL LIGHT / SOFT STRUCTURALIST)
+   Minimalist & Soft-Skill Inspired Light Theme:
+   1. Canvas/Surfaces : Cream White / Warm Off-White (#FAFAFA / #F8F9FA / #FFFFFF)
+   2. Typography/Content : Deep Slate & Graphite (#0F172A / #334155 / #64748B)
+   3. Accent Signature : Refined Indigo / Violet (#6366F1 / #4F46E5 / #EEF2FF)
+   4. Borders & Shadows : Subtle hairlines (rgba(0, 0, 0, 0.06)) & Soft Ambient Shadows
+   ============================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
+
+/* Global Reset & Canvas */
+html, body, p, span, div:not([data-testid*="Icon"]) {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: #334155;
+    font-size: 14px;
+}
+
+.stApp {
+    background-color: #F8FAFC !important;
+    background-image: 
+        radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.05) 0px, transparent 40%),
+        radial-gradient(at 100% 0%, rgba(99, 102, 241, 0.05) 0px, transparent 40%),
+        linear-gradient(to right, rgba(15, 23, 42, 0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(15, 23, 42, 0.02) 1px, transparent 1px) !important;
+    background-size: 100% 100%, 100% 100%, 36px 36px, 36px 36px !important;
+}
+
+/* Fix Streamlit Material Icons */
+[data-testid="stIconMaterial"], 
+[data-testid="stExpanderToggleIcon"],
+[data-testid="stExpander"] summary span:first-child,
+.material-icons, 
+.material-symbols-rounded {
+    font-family: 'Material Symbols Rounded', 'Material Icons' !important;
+    color: #475569 !important;
+}
+
+/* Hide native Streamlit header */
+header[data-testid="stHeader"] {
+    background: transparent !important;
+    display: none !important;
+}
+
+.block-container {
+    padding-top: 1rem !important;
+    padding-bottom: 2.5rem !important;
+    max-width: 96% !important;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.02em !important;
+    color: #0F172A !important;
+}
+
+/* Navigation Bar Épurée (Style Hudl / Veo Light) */
+.hud-navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #FFFFFF;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.02);
+    border-radius: 12px;
+    padding: 12px 20px;
+    margin-bottom: 14px;
+}
+
+.hud-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: #0F172A;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    letter-spacing: -0.02em;
+}
+
+/* Barre de sélection de match sobre et élégante */
+.match-selector-wrapper div[data-testid="stSelectbox"] > div {
+    background: #FFFFFF !important;
+    border: 1.5px solid rgba(99, 102, 241, 0.4) !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+    border-radius: 8px !important;
+    transition: all 0.2s ease;
+}
+
+.match-selector-wrapper div[data-testid="stSelectbox"] > div:hover,
+.match-selector-wrapper div[data-testid="stSelectbox"] > div:focus-within {
+    background: #F8FAFC !important;
+    border-color: #6366F1 !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12) !important;
+}
+
+.match-selector-wrapper div[data-testid="stSelectbox"] span,
+.match-selector-wrapper div[data-testid="stSelectbox"] div[data-baseweb="select"] span {
+    font-weight: 700 !important;
+    color: #0F172A !important;
+    font-size: 14px !important;
+}
+
+.match-selector-wrapper div[data-testid="stSelectbox"] svg {
+    fill: #6366F1 !important;
+    width: 20px !important;
+    height: 20px !important;
+}
+
+/* ==============================================================================
+   TIMELINE DES PHASES (ÉTAPE 1 : DÉCOUPAGE DU MATCH - BOUTONS UNIFORMES)
+   ============================================================================== */
+.timeline-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    padding: 0 2px;
+}
+
+.timeline-step-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #4F46E5;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.timeline-step-desc {
+    font-size: 12.5px;
+    color: #64748B;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Uniformisation stricte de la taille de tous les boutons de phases */
+div[data-testid="stHorizontalBlock"]:not(:has(.match-selector-wrapper)) > div[data-testid="column"] button {
+    width: 100% !important;
+    min-height: 42px !important;
+    padding: 6px 4px !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+}
+
+.phase-card {
+    background: #FFFFFF;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+    border-radius: 8px;
+    padding: 12px 14px;
+    text-align: left;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    min-height: 85px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.phase-card:hover {
+    border-color: rgba(99, 102, 241, 0.5);
+    background: #F8FAFC;
+}
+
+.phase-card-active {
+    background: #EEF2FF !important;
+    border: 1.5px solid #4F46E5 !important;
+    box-shadow: 0 2px 8px rgba(79, 70, 229, 0.15);
+}
+
+.phase-minute {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: #4F46E5;
+    letter-spacing: 0.04em;
+    margin-bottom: 3px;
+}
+
+.phase-name {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #0F172A;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    line-height: 1.2;
+    margin-bottom: 4px;
+}
+
+.phase-stat {
+    font-size: 11.5px;
+    color: #64748B;
+    font-family: 'Inter', sans-serif;
+    line-height: 1.2;
+}
+
+/* Zone de Prompt Centrale */
+div[data-testid="stChatInput"] {
+    background: #FFFFFF !important;
+    border: 1.5px solid rgba(0, 0, 0, 0.12) !important;
+    border-radius: 10px !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03) !important;
+    margin-top: 10px !important;
+    margin-bottom: 12px !important;
+}
+
+div[data-testid="stChatInput"]:focus-within {
+    border-color: #6366F1 !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12) !important;
+}
+
+div[data-testid="stChatInput"] textarea {
+    background: transparent !important;
+    color: #0F172A !important;
+    font-family: 'Inter', sans-serif !important;
+    font-size: 14px !important;
+}
+
+/* Cartes Métier (Style Soft Structuralist) */
+.pro-card {
+    background: #FFFFFF;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.02);
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+}
+
+.pro-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    padding-bottom: 10px;
+    margin-bottom: 12px;
+}
+
+.pro-card-title {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #0F172A;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+.pro-card-subtitle {
+    font-size: 11.5px;
+    color: #64748B;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+/* Accordion / Expanders Dépliables (Light Soft Theme) */
+div[data-testid="stExpander"] {
+    background-color: #FFFFFF !important;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+    border-radius: 10px !important;
+    margin-bottom: 10px !important;
+    overflow: hidden !important;
+}
+
+div[data-testid="stExpander"] summary {
+    padding: 12px 16px !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-weight: 700 !important;
+    font-size: 13.5px !important;
+    color: #0F172A !important;
+    letter-spacing: 0.01em !important;
+    background-color: #FFFFFF !important;
+}
+
+div[data-testid="stExpander"] summary:hover {
+    background-color: #F8FAFC !important;
+    color: #4F46E5 !important;
+}
+
+div[data-testid="stExpander"] [data-testid="stExpanderDetails"] {
+    padding: 14px 18px 18px 18px !important;
+    background-color: #F8FAFC !important;
+    border-top: 1px solid rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Sections du Rapport */
+.report-section {
+    background: #FFFFFF;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-left: 3.5px solid #6366F1;
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin-bottom: 10px;
+}
+
+.report-section-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: #4F46E5;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.report-item {
+    font-size: 14px;
+    color: #334155;
+    line-height: 1.6;
+    margin-bottom: 6px;
+}
+
+/* Badges Statistiques */
+.metric-pill {
+    background: #EEF2FF;
+    color: #4338CA;
+    border: 1px solid rgba(99, 102, 241, 0.25);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+/* Boutons Soft-Skill Light */
+div.stButton > button[data-testid="stBaseButton-secondary"],
+div.stButton > button[kind="secondary"],
+button[data-testid="stBaseButton-secondary"],
+.stButton > button:not([kind="primary"]) {
+    background-color: #FFFFFF !important;
+    background: #FFFFFF !important;
+    color: #334155 !important;
+    border: 1px solid rgba(0, 0, 0, 0.12) !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03) !important;
+    border-radius: 8px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    font-family: 'Inter', sans-serif !important;
+    padding: 8px 14px !important;
+    transition: all 0.15s ease !important;
+}
+
+div.stButton > button[data-testid="stBaseButton-secondary"]:hover, 
+div.stButton > button[kind="secondary"]:hover,
+button[data-testid="stBaseButton-secondary"]:hover {
+    background-color: #F8FAFC !important;
+    background: #F8FAFC !important;
+    border-color: rgba(0, 0, 0, 0.25) !important;
+    color: #0F172A !important;
+}
+
+div.stButton > button[data-testid="stBaseButton-primary"],
+div.stButton > button[kind="primary"],
+button[data-testid="stBaseButton-primary"],
+button[kind="primary"],
+.primary-btn button {
+    background-color: #4F46E5 !important;
+    background: #4F46E5 !important;
+    color: #FFFFFF !important;
+    font-weight: 700 !important;
+    border: 1.5px solid #4338CA !important;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 6px rgba(79, 70, 229, 0.25) !important;
+    transform: none !important;
+}
+
+div.stButton > button[data-testid="stBaseButton-primary"]:hover,
+div.stButton > button[kind="primary"]:hover,
+button[data-testid="stBaseButton-primary"]:hover,
+button[kind="primary"]:hover,
+.primary-btn button:hover {
+    background-color: #4338CA !important;
+    background: #4338CA !important;
+    border-color: #3730A3 !important;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35) !important;
+}
+
+/* Métriques KPIs */
+div[data-testid="stHorizontalBlock"]:has(div[data-testid="stMetric"]) {
+    background: #FFFFFF !important;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03), 0 4px 12px rgba(0, 0, 0, 0.02) !important;
+    border-radius: 10px !important;
+    padding: 12px 18px 8px 18px !important;
+    margin-bottom: 12px !important;
+}
+
+div[data-testid="stMetricValue"] {
+    font-family: 'JetBrains Mono', monospace !important;
+    font-weight: 800 !important;
+    color: #0F172A !important;
+    font-size: 22px !important;
+}
+
+div[data-testid="stMetricLabel"],
+div[data-testid="stMetricLabel"] p {
+    font-family: 'Inter', sans-serif !important;
+    font-size: 10.5px !important;
+    font-weight: 600 !important;
+    color: #64748B !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.02em !important;
+    white-space: nowrap !important;
+    overflow: visible !important;
+    text-overflow: unset !important;
+    line-height: 1.2 !important;
+}
+
+/* Tooltip Icon & Question Marks (High Contrast on White Surfaces) */
+.stTooltipIcon,
+[data-testid="stTooltipIcon"],
+[data-testid="stTooltipHoverTarget"],
+div[data-testid="stMetricLabel"] .stTooltipIcon,
+div[data-testid="stMetricLabel"] button,
+div[data-testid="stMetric"] button {
+    color: #64748B !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.stTooltipIcon svg,
+[data-testid="stTooltipIcon"] svg,
+[data-testid="stTooltipHoverTarget"] svg,
+div[data-testid="stMetricLabel"] svg,
+div[data-testid="stMetric"] svg {
+    stroke: #64748B !important;
+    color: #64748B !important;
+    fill: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    width: 14px !important;
+    height: 14px !important;
+    transition: stroke 0.15s ease, transform 0.15s ease !important;
+}
+
+.stTooltipIcon:hover svg,
+[data-testid="stTooltipIcon"]:hover svg,
+div[data-testid="stMetricLabel"] button:hover svg {
+    stroke: #0F172A !important;
+    color: #0F172A !important;
+    transform: scale(1.15) !important;
+}
+
+/* Tooltip Popup Box Styling (High Contrast HUD) */
+div[data-baseweb="tooltip"],
+div[role="tooltip"] {
+    background-color: #0F172A !important;
+    color: #FFFFFF !important;
+    border-radius: 6px !important;
+    font-family: 'Inter', sans-serif !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    padding: 6px 10px !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    letter-spacing: 0.01em !important;
+}
+
+div[data-baseweb="tooltip"] div,
+div[role="tooltip"] div,
+div[data-baseweb="tooltip"] p,
+div[role="tooltip"] p {
+    color: #FFFFFF !important;
+    font-size: 12px !important;
+}
+
+/* Sidebar */
+section[data-testid="stSidebar"] {
+    background-color: #F8FAFC !important;
+    border-right: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Tabs */
+.stTabs [data-baseweb="tab-list"] {
+    gap: 6px;
+    background: #F1F5F9;
+    padding: 4px;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.stTabs [data-baseweb="tab"] {
+    border-radius: 6px !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-weight: 600 !important;
+    color: #64748B !important;
+    padding: 7px 18px !important;
+    border: none !important;
+    font-size: 13px !important;
+}
+
+.stTabs [aria-selected="true"] {
+    background: #FFFFFF !important;
+    color: #0F172A !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+    border: 1px solid rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Selectbox Styling & Contrast (High Visibility Light Mode) */
+label[data-testid="stWidgetLabel"] p {
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    color: #0F172A !important;
+    letter-spacing: 0.02em !important;
+}
+
+/* React-Aria ComboBox (Streamlit 1.40+) */
+div[data-testid="stSelectbox"] .react-aria-ComboBox,
+div[data-testid="stSelectbox"] div[role="group"],
+.match-selector-wrapper div[data-testid="stSelectbox"] div[role="group"] {
+    background-color: #FFFFFF !important;
+    background: #FFFFFF !important;
+    border: 1px solid rgba(0, 0, 0, 0.15) !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03) !important;
+    border-radius: 8px !important;
+    min-height: 44px !important;
+    display: flex !important;
+    align-items: center !important;
+    transition: all 0.15s ease !important;
+}
+
+div[data-testid="stSelectbox"] div[role="group"]:hover,
+div[data-testid="stSelectbox"] div[role="group"]:focus-within,
+.match-selector-wrapper div[data-testid="stSelectbox"] div[role="group"]:hover,
+.match-selector-wrapper div[data-testid="stSelectbox"] div[role="group"]:focus-within {
+    background-color: #F8FAFC !important;
+    border-color: rgba(99, 102, 241, 0.6) !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12) !important;
+}
+
+div[data-testid="stSelectbox"] input[role="combobox"],
+.match-selector-wrapper input[role="combobox"] {
+    color: #0F172A !important;
+    font-family: 'Plus Jakarta Sans', 'Inter', sans-serif !important;
+    font-weight: 700 !important;
+    font-size: 14.5px !important;
+    background: transparent !important;
+    padding-left: 14px !important;
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    min-width: 180px !important;
+    display: block !important;
+}
+
+div[data-testid="stSelectbox"] input[role="combobox"]::placeholder,
+.match-selector-wrapper input[role="combobox"]::placeholder {
+    color: #4F46E5 !important;
+    opacity: 0.95 !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+}
+
+div[data-testid="stSelectbox"] button,
+.match-selector-wrapper div[data-testid="stSelectbox"] button {
+    background: transparent !important;
+    border: none !important;
+    color: #4F46E5 !important;
+    box-shadow: none !important;
+    flex: 0 0 38px !important;
+    width: 38px !important;
+    max-width: 38px !important;
+    height: 38px !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+div[data-testid="stSelectbox"] svg {
+    fill: #4F46E5 !important;
+    color: #4F46E5 !important;
+    width: 22px !important;
+    height: 22px !important;
+}
+
+/* React Aria Listbox / Dropdown Popover Options */
+div[data-testid="stSelectboxVirtualDropdown"],
+div[data-rac="popover"],
+div[data-baseweb="popover"],
+ul[role="listbox"] {
+    background-color: #FFFFFF !important;
+    border: 1.5px solid #6366F1 !important;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+    border-radius: 8px !important;
+    padding: 6px !important;
+}
+
+li[role="option"],
+div[role="option"] {
+    background-color: #FFFFFF !important;
+    color: #0F172A !important;
+    font-size: 13.5px !important;
+    font-weight: 600 !important;
+    padding: 10px 14px !important;
+    margin-bottom: 4px !important;
+    border-radius: 6px !important;
+    transition: all 0.15s ease !important;
+}
+
+li[role="option"]:hover,
+li[role="option"][aria-selected="true"],
+div[role="option"]:hover,
+div[role="option"][aria-selected="true"] {
+    background-color: #EEF2FF !important;
+    color: #4338CA !important;
+}
+
+/* Inputs */
+.stTextInput input, .stTextArea textarea {
+    background: #FFFFFF !important;
+    color: #0F172A !important;
+    border: 1px solid rgba(0, 0, 0, 0.15) !important;
+    border-radius: 6px !important;
+    font-size: 13.5px !important;
+    padding: 8px 12px !important;
+}
+
+.stTextInput input:focus, .stTextArea textarea:focus {
+    border-color: #6366F1 !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12) !important;
+}
+
+/* Supprimer les instructions natives "Press Enter to apply" */
+div[data-testid="InputInstructions"],
+.stTextInput div[data-testid="InputInstructions"],
+div[data-baseweb="input"] + div {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* ==============================================================================
+   FOOTBALL BRANDING & HERO PORTAL STYLING (HUDL / VEO PRO AESTHETICS)
+   ============================================================================== */
+
+/* Top Nav Brand Wrapper */
+.app-brand-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-top: 2px;
+    white-space: nowrap;
+}
+
+.app-logo-img {
+    width: 38px;
+    height: 38px;
+    border-radius: 9px;
+    border: 1.5px solid rgba(16, 185, 129, 0.4);
+    box-shadow: 0 2px 10px rgba(16, 185, 129, 0.2);
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.app-brand-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.app-brand-title-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.brand-pill-emerald {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    font-weight: 700;
+    color: #047857;
+    background: #ECFDF5;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    padding: 1.5px 6px;
+    border-radius: 4px;
+    letter-spacing: 0.04em;
+}
+
+.app-brand-subtitle {
+    font-size: 11px;
+    color: #64748B;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+}
+
+/* Hero Portal Container */
+.hero-portal-container {
+    background: #FFFFFF;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 14px;
+    padding: 22px 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    margin-top: 14px;
+    margin-bottom: 20px;
+}
+
+.hero-portal-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: 24px;
+    align-items: center;
+}
+
+@media (max-width: 900px) {
+    .hero-portal-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.hero-tactical-img {
+    width: 100%;
+    border-radius: 10px;
+    border: 1.5px solid rgba(16, 185, 129, 0.3);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    display: block;
+}
+
+.hero-img-caption {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    font-weight: 700;
+    color: #64748B;
+    text-align: center;
+    margin-top: 7px;
+    letter-spacing: 0.03em;
+}
+
+.hero-portal-right {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: #059669;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.pulse-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: #10B981;
+    display: inline-block;
+    box-shadow: 0 0 0 rgba(16, 185, 129, 0.4);
+    animation: pulse-emerald 2s infinite;
+}
+
+@keyframes pulse-emerald {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+    70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+.hero-title {
+    font-size: 22px !important;
+    font-weight: 800 !important;
+    color: #0F172A !important;
+    margin: 0 0 8px 0 !important;
+    letter-spacing: -0.02em !important;
+    line-height: 1.25 !important;
+}
+
+.hero-desc {
+    font-size: 13.5px;
+    color: #475569;
+    line-height: 1.55;
+    margin-bottom: 0px !important;
+}
+
+.section-badge-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    color: #0F172A;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+/* Match Fixture Cards */
+div[data-testid="stHorizontalBlock"]:has(.match-fixture-card) {
+    align-items: stretch !important;
+}
+
+div[data-testid="stHorizontalBlock"]:has(.match-fixture-card) > div[data-testid="stColumn"] {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+}
+
+div[data-testid="stHorizontalBlock"]:has(.match-fixture-card) > div[data-testid="stColumn"] > div[data-testid="stVerticalBlock"] {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    height: 100% !important;
+}
+
+.match-fixture-card {
+    background: #FFFFFF;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+    padding: 14px 16px 12px 16px;
+    margin-bottom: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+    transition: all 0.2s ease;
+    border-top: 3px solid #10B981;
+    height: 116px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+}
+
+.match-fixture-card:hover {
+    border-color: rgba(16, 185, 129, 0.6);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(16, 185, 129, 0.08);
+}
+
+.fixture-stage-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    white-space: nowrap;
+    overflow: hidden;
+    gap: 6px;
+}
+
+.fixture-stage-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    color: #059669;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-shrink: 1;
+}
+
+.fixture-date {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    color: #64748B;
+    flex-shrink: 0;
+}
+
+.fixture-teams-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    margin-bottom: 6px;
+}
+
+.fixture-team {
+    display: flex;
+    align-items: center;
+    font-size: 14.5px;
+    font-weight: 800;
+    color: #0F172A;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    flex: 1;
+    min-width: 0;
+}
+
+.fixture-team-home {
+    justify-content: flex-start;
+}
+
+.fixture-team-away {
+    justify-content: flex-end;
+    text-align: right;
+}
+
+.fixture-team-name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.fixture-score-pill {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 800;
+    color: #0F172A;
+    background: #F1F5F9;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    padding: 2px 8px;
+    border-radius: 6px;
+    flex-shrink: 0;
+}
+
+.fixture-meta-details {
+    font-size: 11px;
+    color: #64748B;
+    line-height: 1.3;
+}
+
+.fixture-stadium {
+    font-size: 11px;
+    color: #64748B;
+    font-family: 'Inter', sans-serif;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Active Match Broadcast Scoreboard Header */
+.active-match-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 10px;
+    padding: 14px 20px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+    color: #0F172A;
+}
+
+.active-match-left {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.active-match-stage {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: #059669;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.live-indicator {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: #10B981;
+    display: inline-block;
+    box-shadow: 0 0 6px rgba(16, 185, 129, 0.6);
+}
+
+.active-match-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 18px;
+    font-weight: 800;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: #0F172A;
+}
+
+.active-score-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    font-weight: 800;
+    color: #0F172A;
+    background: #F1F5F9;
+    border: 1px solid #CBD5E1;
+    padding: 2px 10px;
+    border-radius: 6px;
+    letter-spacing: 0.05em;
+}
+
+.active-match-right {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+}
+
+.active-focus-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    color: #64748B;
+    letter-spacing: 0.05em;
+}
+
+.active-focus-value {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #0F172A;
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* Zone Pill & Football Badges */
+.zone-pill {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    font-weight: 700;
+    color: #059669;
+    background: #ECFDF5;
+    border: 1px solid rgba(16, 185, 129, 0.25);
+    padding: 1px 5px;
+    border-radius: 3px;
+    letter-spacing: 0.03em;
+    margin-left: 4px;
+}
+
+/* UI Interaction Lock during Report Generation */
+body:has(.stSpinner),
+body:has([data-testid="stSpinner"]),
+body:has([data-testid="stStatusWidget"]) {
+    cursor: wait !important;
+}
+
+body:has(.stSpinner) [data-testid="stSelectbox"],
+body:has(.stSpinner) .match-selector-wrapper,
+body:has(.stSpinner) [data-testid="stButton"] button,
+body:has(.stSpinner) button,
+body:has(.stSpinner) .match-fixture-card,
+body:has(.stSpinner) [data-baseweb="tab-list"],
+body:has([data-testid="stSpinner"]) [data-testid="stSelectbox"],
+body:has([data-testid="stSpinner"]) .match-selector-wrapper,
+body:has([data-testid="stSpinner"]) [data-testid="stButton"] button,
+body:has([data-testid="stSpinner"]) button,
+body:has([data-testid="stSpinner"]) .match-fixture-card,
+body:has([data-testid="stSpinner"]) [data-baseweb="tab-list"],
+body:has([data-testid="stStatusWidget"]) [data-testid="stSelectbox"],
+body:has([data-testid="stStatusWidget"]) .match-selector-wrapper,
+body:has([data-testid="stStatusWidget"]) [data-testid="stButton"] button,
+body:has([data-testid="stStatusWidget"]) button,
+body:has([data-testid="stStatusWidget"]) .match-fixture-card,
+body:has([data-testid="stStatusWidget"]) [data-baseweb="tab-list"] {
+    pointer-events: none !important;
+    cursor: not-allowed !important;
+    opacity: 0.55 !important;
+    filter: grayscale(0.2) !important;
+    transition: all 0.2s ease !important;
+}
+
+.stSpinner,
+[data-testid="stSpinner"] {
+    pointer-events: auto !important;
+    opacity: 1 !important;
+    filter: none !important;
+    background: #FFFFFF !important;
+    border: 1px solid #CBD5E1 !important;
+    border-left: 4px solid #4F46E5 !important;
+    border-radius: 8px !important;
+    padding: 14px 18px !important;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06) !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-weight: 700 !important;
+    color: #0F172A !important;
+    margin: 12px 0 !important;
+}
+

@@ -1,0 +1,41 @@
+# Environnement virtuel & Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Fichiers de configuration & secrets
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+*.pem
+*.key
+
+# Données volumineuses & bases locales
+data/chroma_db/
+data/bm25_index.pkl
+data/*.db
+data/research_papers/
+
+# Vidéos & médias lourds
+*.mov
+*.mp4
+artifacts/raw_video/
+artifacts/*.mp4
+
+# Logs & fichiers de travail personnels
+*.log
+*.pages
+.agent
+.agents/
+
+# IDEs & OS
+.DS_Store
+.vscode/
+.idea/
+
+# Articles Spielverlagerung scrapés (droits d auteur, régénérables via scrape_tactics.py)
+data/raw_markdown/

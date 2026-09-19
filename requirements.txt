@@ -1,0 +1,30 @@
+# Dépendances principales foot-GPT
+pydantic>=2.10.0
+statsbombpy>=1.22.0
+pandas>=2.2.0
+numpy>=1.26.0
+pypdf>=5.0.0
+reportlab>=4.2.0
+trafilatura>=2.0.0
+
+# Moteur RAG Hybride & Embeddings
+chromadb>=0.5.0
+rank-bm25>=0.2.2
+sentence-transformers>=3.0.0
+fastembed>=0.3.0
+
+# Orchestration Agentique & LLMs
+langchain>=0.3.0
+langchain-core>=0.3.0
+langchain-groq>=0.2.0
+langgraph>=0.2.0
+python-dotenv>=1.0.0
+
+# Interface Utilisateur Web & DataViz
+streamlit>=1.35.0
+plotly>=5.20.0
+matplotlib>=3.8.0
+mplsoccer>=1.2.0
+
+# Tests & Qualité
+pytest>=8.0.0
