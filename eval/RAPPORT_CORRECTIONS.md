@@ -19,7 +19,7 @@ Ce rapport mesure le **retrieval** (quels chunks remontent, avec quels scores). 
 
 Écarts par rapport à la mission, à connaître :
 
-- **Requête du reranker (ajout annulé).** J'avais fait scorer le reranker sur `topics + zones` du plan pour contourner les questions en français. Décision de périmètre ultérieure : foot-GPT est en anglais uniquement, ce changement est annulé et le reranker score la même requête enrichie que BM25 et le dense. Effet constaté : sur 5 questions anglaises réalistes passées dans le pipeline (plan simulé), 4 obtiennent un meilleur score entre -3,6 et -1,2, donc `sources_sufficient=False` au seuil 0,0 ; les clés de deltas (« Argentina turnovers 0 40 ») ajoutées à la requête font baisser les scores. Les 15 requêtes de référence, elles, ne contiennent pas ce bruit : la calibration de la section 4 est optimiste pour les requêtes réelles.
+- **Requête du reranker (ajout annulé).** J'avais fait scorer le reranker sur `topics + zones` du plan pour contourner les questions en français. Décision de périmètre ultérieure : foot-GPT est en anglais uniquement, ce changement est annulé et le reranker score la même requête enrichie que BM25 et le dense. Effet constaté : sur 5 questions anglaises réalistes passées dans le pipeline (plan simulé), 4 obtiennent un meilleur score entre -3,6 et -1,2, donc `sources_sufficient=False` au seuil de 0,0 de l'époque ; les clés de deltas (« Argentina turnovers 0 40 ») ajoutées à la requête font baisser les scores. Les 15 requêtes de référence ne contenaient pas ce bruit : le seuil a donc été recalibré sur des requêtes à la forme réelle du pipeline (section 4, seuil final -4,0).
 - Le Markdown ne préfixe plus le contenu des chunks par `### section` (la section est une métadonnée, ajoutée au texte embeddé, BM25 et reranker).
 - Le brouillon de repli du synthétiseur (erreur LLM) citait en dur `[Bauer & Anzer, 2026 ...]` ; il ne cite plus que les sources récupérées.
 - Le `MockChatModel` ne cite plus que les sources présentes dans son prompt, et renvoie `is_anchored=True`.
@@ -49,7 +49,7 @@ Notes de lecture :
 
 ## 3. Résultats par requête
 
-Les identifiants de chunks ne sont pas comparables un à un (le découpage a changé) ; comparer les documents et les scores. « Avant » : toujours 4 chunks, sans filtre. « Après » : chunks gardés par le pipeline réel (`search_detailed`, seuil `RERANK_MIN_SCORE = 0.0`).
+Les identifiants de chunks ne sont pas comparables un à un (le découpage a changé) ; comparer les documents et les scores. « Avant » : toujours 4 chunks, sans filtre. « Après » : chunks gardés par le pipeline réel (`search_detailed`, seuil `RERANK_MIN_SCORE`, 0,0 à l'époque de ce tableau). Pour ces 15 requêtes, le résultat est identique avec le seuil final de -4,0 (en corpus >= 2,5 ; hors sujet <= -5,1).
 
 | Requête | Avant : top 4 (score reranker) | Après : chunks gardés (score) | `sources_sufficient` après |
 |---|---|---|---|
@@ -73,16 +73,56 @@ Les identifiants de chunks ne sont pas comparables un à un (le découpage a cha
 
 ## 4. Calibration du seuil `RERANK_MIN_SCORE`
 
-| Indicateur (score brut du cross-encoder) | Avant | Après ré-indexation |
-|---|---|---|
-| Plus bas score parmi les 48 chunks du top 4 (requêtes en corpus) | 2.4915 | 3.1688 |
-| Plus bas top 1 (requêtes en corpus) | 3.7253 | 4.191 |
-| Meilleur score toutes requêtes hors sujet | -5.1549 | -6.9322 |
+**Valeur finale : -4,0** (elle était de 0,0 dans la première version de ce rapport).
 
-- Le cross-encoder `ms-marco-MiniLM-L-6-v2` sort un logit : 0 correspond à une probabilité de pertinence de 0,5, frontière naturelle du modèle.
-- L'écart entre bons et mauvais chunks est large : de -5.1549 à 2.4915 avant, de -6.9322 à 3.1688 après. Toute valeur dans cet intervalle sépare les 15 requêtes ; 0,0 est choisi parce qu'il est à peu près au milieu de l'écart et que ce n'est pas une valeur ajustée aux 15 requêtes.
-- Le seuil a été fixé sur l'état « avant » puis revalidé après ré-indexation (les chunks plus courts n'ont pas fait bouger la séparation).
-- Limite de cette calibration : les 3 requêtes hors sujet (rugby, nutrition, arbitrage vidéo au cricket) sont très éloignées du football. Une question de football **non couverte** (gardien de but, coups de pied arrêtés) peut obtenir un score entre 0 et 3 et passer le filtre. Il faudrait quelques requêtes « football mais hors corpus » pour affiner ; je n'en ai pas inventé pour ne pas ajuster le seuil à ma propre intuition.
+### 4.1 Pourquoi 0,0 ne tenait pas
+
+Le premier seuil (0,0, frontière naturelle du logit) avait été calibré sur les 15 requêtes de `eval/baseline_queries.json`, des requêtes propres (une question et des termes). Le pipeline envoie en réalité `question + topics + zones + 2 clés de deltas`, par exemple « Why did France struggle ... Counterpressing Passing Networks zone 14 Argentina turnovers 0 40 France turnovers 0 40 ». Les clés de deltas sont toujours de la forme `{Équipe}_turnovers_{début}_{fin}` (relevées sur le `MatchMiner`) et abaissent les scores du cross-encoder. Au seuil 0,0, seules 5 requêtes en corpus sur 12 gardaient des sources.
+
+### 4.2 Nouveau jeu : `eval/pipeline_queries.json`
+
+18 requêtes construites par `build_enriched_query` (le code du nœud RAG, extrait en fonction pour l'occasion) : 12 en corpus, 2 de football hors corpus (gardien de but, coups de pied arrêtés), 4 hors sujet. Parmi les 4 hors sujet, 2 ont des topics vides (routeur sans thème) et 2 ont des topics de football par défaut (cas du routeur simulé, le pire cas). Résultats : `eval/results_pipeline.json`. Score du meilleur chunk par requête, et nombre de chunks gardés au seuil -4,0 :
+
+| Requête | Type | Requête envoyée (début) | Meilleur score | Chunks gardés |
+|---|---|---|---|---|
+| p01 | in_corpus | Why did France struggle to progress the ball in the first 40 minutes? Counterpre | -1.7979 | 1 |
+| p02 | in_corpus | How did Argentina exploit the half-spaces on the left side? Half-Spaces left hal | 0.6668 | 4 |
+| p03 | in_corpus | Analyse the full match flow and the key tactical turning points. Rest-Defense Co | -0.9142 | 4 |
+| p04 | in_corpus | Why did France recover control between minute 70 and 85? Counterpressing Vertica | -1.2099 | 3 |
+| p05 | in_corpus | How effective was the French rest-defense after losing the ball in the opponent' | -0.8416 | 4 |
+| p06 | in_corpus | Assess Argentina's compactness and zonal marking after the substitutions. Compac | -2.0813 | 4 |
+| p07 | in_corpus | Which players were isolated by the passing network structure of France? Passing  | -0.2055 | 4 |
+| p08 | in_corpus | How did Messi's positioning between the lines create dismarking opportunities? D | 0.2702 | 4 |
+| p09 | in_corpus | Explain how France's vertical build-up changed after the double substitution. Ve | 1.3908 | 4 |
+| p10 | in_corpus | What does the blind side of the Argentine midfield tell us about Mbappe's runs?  | 0.9685 | 4 |
+| p11 | in_corpus | How valuable were line-breaking passes in the final third for Argentina? Line-br | 1.0156 | 4 |
+| p12 | in_corpus | Describe the tactical impact of the high press in the opening phase. Counterpres | -3.0 | 2 |
+| u01 | football_uncovered | How should a goalkeeper position himself during a penalty shootout? Goalkeeping  | -4.9718 | 0 |
+| u02 | football_uncovered | What are the best corner kick routines to score from set pieces? Set Pieces six  | -8.2171 | 0 |
+| x01 | off_topic | What is the correct scrum engagement technique for rugby props? Argentina turnov | -5.7114 | 0 |
+| x02 | off_topic | How many grams of protein should a marathon runner eat before a race? Argentina  | -8.5502 | 0 |
+| x03 | off_topic | Which carbohydrates are best for a marathon runner the day before the race? Rest | -7.1173 | 0 |
+| x04 | off_topic | How does the video referee review process work in cricket tournaments? Rest-Defe | -2.5654 | 2 |
+
+### 4.3 Choix du seuil
+
+| Classe (meilleur chunk par requête) | Plage observée |
+|---|---|
+| En corpus (12) | de -3,0 (p12) à +1,4 (p09) |
+| Football hors corpus (2) | -8,2 et -5,0 |
+| Hors sujet, topics vides ou non football (3 : x01 à x03) | de -8,6 à -5,7 |
+| Hors sujet avec topics de football par défaut (x04) | -2,6 |
+
+- Toute valeur de ]-5,0 ; -3,0] garde les 12 requêtes en corpus et écarte les 5 requêtes hors corpus séparables. **-4,0 est le milieu de cet intervalle** (marge de 1,0 de chaque côté), sans ajustement fin. Plus bas que -5,0, la requête « gardien de but » (u01) passerait.
+- Le cas **x04 n'est pas séparable** : une question sur l'arbitrage vidéo au cricket, à laquelle le routeur a ajouté « Rest-Defense Half-Spaces Passing Networks », obtient -2,6, au-dessus du pire cas en corpus (-3,0). Le cross-encoder voit des termes de football dans la requête et ne peut pas le distinguer. Seul un routeur qui ne plaque pas de thèmes de football sur une question hors football, ou le garde-fou hors sujet du synthétiseur et de `SecurityGuardrails`, peut traiter ce cas. Dans le test de bout en bout avec le routeur simulé (plan fixe de football), la question de rugby obtient -1,7 et passe aussi : c'est un artefact du simulateur, mais il montre que le filtre dépend de ce que le routeur émet.
+- Les 15 requêtes propres sont toujours correctement classées à -4,0 (en corpus >= 2,5 au pire, hors sujet <= -5,1).
+- Cinq questions anglaises passées dans le pipeline complet (routeur simulé) : meilleurs scores -3,6, -3,5, +0,4, -1,2 et -1,7, toutes `sources_sufficient=True` à -4,0 (contre 1 sur 5 à 0,0). Deux d'entre elles ne gardent qu'un ou trois chunks (-3,6 et -3,5).
+
+### 4.4 Ce que le seuil fait et ne fait pas
+
+- Il juge si **la requête est couverte par le corpus**, pas si chaque chunk gardé est bon : à -4,0, un chunk faible (par exemple à -3,5) est gardé tant que la requête a un bon meilleur chunk ou est proche de la limite. Les prompts et le critique (`invalid_citation`, lecture des chunks complets) servent de seconde ligne.
+- La marge est mesurée sur 18 requêtes : un nouveau type de question peut tomber hors de la plage. `tests/test_threshold_calibration.py` verrouille le classement sur les snapshots versionnés ; il échoue si le seuil sort de l'intervalle observé.
+- Une piste à tester : retirer les clés de deltas de la requête du reranker (elles ne portent que le nom d'une équipe et des minutes). Non fait, ce serait une nouvelle différence entre la requête du reranker et celle des retrievers, écartée par la décision de périmètre.
 - Le filtre est désactivé si le cross-encoder n'est pas chargé (le repli en 1/rang n'a pas la même échelle) ; `rag_relevance_filter_active` le signale dans la télémétrie.
 
 ## 5. Vérifications de l'étape 3b (constats, sans correction)
@@ -125,11 +165,12 @@ Rien n'a été modifié ici (le portfolio est exclu du dépôt via `.git/info/ex
 ## 7. Limites restantes
 
 1. **Ce rapport mesure le retrieval, pas la qualité des réponses.** Aucune évaluation de bout en bout avec un vrai LLM n'a été faite (tests avec `MockChatModel`, sans clé API). Une évaluation sur un golden set annoté (pertinence des chunks jugée par un humain, fidélité et citations des rapports) reste à faire ; sans elle, on ne sait pas si les 4 chunks gardés sont les bons, seulement qu'ils sont au-dessus du seuil.
-2. **Le jeu de 15 requêtes est petit et optimiste.** Les 12 requêtes en corpus reprennent les titres des documents indexés ; elles sont plus faciles que de vraies questions de coach. Les 3 hors sujet sont extrêmes. La séparation observée (de -6,9 à +3,2) ne dit rien sur les cas intermédiaires.
+2. **Le jeu de 15 requêtes est petit et optimiste.** Les 12 requêtes en corpus reprennent les titres des documents indexés ; elles sont plus faciles que de vraies questions de coach. Les 3 hors sujet sont extrêmes. La séparation observée (de -6,9 à +3,2) ne dit rien sur les cas intermédiaires ; le jeu à la forme du pipeline (18 requêtes, section 4) est plus réaliste mais écrit par moi, avec des topics que j'ai choisis à la place d'un vrai routeur LLM.
 3. **Vérification des citations de niveau document.** La regex reconnaît `[Auteur, Année - Titre]`, format désormais produit pour tous les documents du corpus. Elle prouve que la citation existe parmi les chunks fournis, pas que le chunk cité soutient l'affirmation : cela reste jugé par le LLM, qui lit maintenant les chunks complets. Un nouveau document sans année dans ses métadonnées produirait une citation non vérifiée (un test du corpus Markdown le détecte).
 4. **`is_anchored` dépend du juge LLM** ; aucun contrôle déterministe de la Golden Anchoring Rule.
-5. **Langue et forme de la requête.** Le cross-encoder est anglais seulement (périmètre : anglais uniquement, voir README). La requête enrichie réelle contient des clés de deltas qui font baisser les scores ; le seuil de 0,0, calibré sur des requêtes propres, rejette alors des questions pertinentes (voir section 1). Une recalibration sur des requêtes construites comme le pipeline les construit est nécessaire.
+5. **Langue et forme de la requête.** Le cross-encoder est anglais seulement (périmètre : anglais uniquement, voir README). La requête enrichie contient des clés de deltas qui abaissent les scores ; le seuil de -4,0 en tient compte mais reste calibré sur des topics écrits à la main. À refaire avec les topics d'un vrai routeur LLM, et sur de vraies questions de coach.
 6. **Modèles inchangés.** Embedding `all-MiniLM-L6-v2` et cross-encoder `ms-marco-MiniLM-L-6-v2` n'ont pas été comparés à d'autres ; seuls leurs entrées ont été corrigées. `top_k` (15/15), RRF k=60 et top 4 gardent la justification reconstruite, pas mesurée.
 7. **Dérives du corpus non traitées** : guides désynchronisés du script de génération (section 5), année absente ou 2020 par défaut pour les Markdown sans année explicite, auteur des articles codé en dur.
 8. **Reproductibilité.** `data/` (index, PDFs) est ignoré par git : la ré-indexation (`python index_knowledge_base.py`) doit être refaite sur chaque machine, et les 977 chunks en dépendent.
 9. **Fallback sans cross-encoder** : le seuil est désactivé, donc le comportement « toujours 4 chunks » revient dans ce cas (signalé en télémétrie, pas dans le rapport).
+10. **Hors sujet avec topics de football** (x04 : -2,6) : non détectable par le seuil, voir section 4.3.

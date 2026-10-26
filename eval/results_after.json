@@ -3146,11 +3146,6 @@
           "score": 0.305
         },
         {
-          "chunk_id": "decroos_2020_valuing_player_actions_vaep_p30_c1",
-          "citation": "[Tom Decroos, Lotte Bransen, Jan Van Haaren, Jesse Davis, 2019 - Actions Speak Louder than Goals: Valuing Player Actions in Soccer (VAEP Framework)]",
-          "score": 0.3032
-        },
-        {
           "chunk_id": "tactics_dismarking_methods_c21",
           "citation": "[Spielverlagerung Editorial Staff, 2017 - Tactical Theory: the various methods of dismarking]",
           "score": 0.302
@@ -3169,6 +3164,11 @@
           "chunk_id": "tactics_dismarking_methods_c11",
           "citation": "[Spielverlagerung Editorial Staff, 2017 - Tactical Theory: the various methods of dismarking]",
           "score": 0.2904
+        },
+        {
+          "chunk_id": "brefeld_2019_tactical_analysis_spatiotemporal_p8_c2",
+          "citation": "[Ulf Brefeld, Dirk Brockmann, Jan Meyer, 2019 - Data-Driven Tactical Analysis in Soccer: A Modern Overview of Machine Learning Models]",
+          "score": 0.2892
         }
       ],
       "rrf_order": [
@@ -3253,12 +3253,12 @@
           "score": 0.0141
         },
         {
-          "chunk_id": "decroos_2020_valuing_player_actions_vaep_p30_c1",
-          "citation": "[Tom Decroos, Lotte Bransen, Jan Van Haaren, Jesse Davis, 2019 - Actions Speak Louder than Goals: Valuing Player Actions in Soccer (VAEP Framework)]",
+          "chunk_id": "tactics_dismarking_methods_c21",
+          "citation": "[Spielverlagerung Editorial Staff, 2017 - Tactical Theory: the various methods of dismarking]",
           "score": 0.0141
         },
         {
-          "chunk_id": "tactics_dismarking_methods_c21",
+          "chunk_id": "tactics_dismarking_methods_c35",
           "citation": "[Spielverlagerung Editorial Staff, 2017 - Tactical Theory: the various methods of dismarking]",
           "score": 0.0139
         },
@@ -3268,8 +3268,8 @@
           "score": 0.0137
         },
         {
-          "chunk_id": "tactics_dismarking_methods_c35",
-          "citation": "[Spielverlagerung Editorial Staff, 2017 - Tactical Theory: the various methods of dismarking]",
+          "chunk_id": "tactics_zonal_marking_coverage_c16",
+          "citation": "[Spielverlagerung Editorial Staff, 2014 - Zonal Marking / Zonal Coverage]",
           "score": 0.0137
         },
         {
@@ -3278,8 +3278,8 @@
           "score": 0.0135
         },
         {
-          "chunk_id": "tactics_zonal_marking_coverage_c16",
-          "citation": "[Spielverlagerung Editorial Staff, 2014 - Zonal Marking / Zonal Coverage]",
+          "chunk_id": "tactics_dismarking_methods_c11",
+          "citation": "[Spielverlagerung Editorial Staff, 2017 - Tactical Theory: the various methods of dismarking]",
           "score": 0.0135
         },
         {
@@ -3288,8 +3288,8 @@
           "score": 0.0133
         },
         {
-          "chunk_id": "tactics_dismarking_methods_c11",
-          "citation": "[Spielverlagerung Editorial Staff, 2017 - Tactical Theory: the various methods of dismarking]",
+          "chunk_id": "brefeld_2019_tactical_analysis_spatiotemporal_p8_c2",
+          "citation": "[Ulf Brefeld, Dirk Brockmann, Jan Meyer, 2019 - Data-Driven Tactical Analysis in Soccer: A Modern Overview of Machine Learning Models]",
           "score": 0.0133
         }
       ],
@@ -3405,14 +3405,14 @@
           "score": -10.3403
         },
         {
+          "chunk_id": "brefeld_2019_tactical_analysis_spatiotemporal_p8_c2",
+          "citation": "[Ulf Brefeld, Dirk Brockmann, Jan Meyer, 2019 - Data-Driven Tactical Analysis in Soccer: A Modern Overview of Machine Learning Models]",
+          "score": -10.9938
+        },
+        {
           "chunk_id": "rijsdijk_2025_line_breaking_passes_clustering_p3_c4",
           "citation": "[R. Rijsdijk, P. Kempe, M. Brefeld, 2025 - Through the Gaps: Uncovering Tactical Line-Breaking Passes with Clustering]",
           "score": -11.0307
-        },
-        {
-          "chunk_id": "decroos_2020_valuing_player_actions_vaep_p30_c1",
-          "citation": "[Tom Decroos, Lotte Bransen, Jan Van Haaren, Jesse Davis, 2019 - Actions Speak Louder than Goals: Valuing Player Actions in Soccer (VAEP Framework)]",
-          "score": -11.3551
         }
       ],
       "reranked_top4": [
@@ -5851,14 +5851,14 @@
           "score": 0.1216
         },
         {
-          "chunk_id": "dandrea_2025_high_performance_passing_networks_p2_c2",
-          "citation": "[A. D'Andrea, M. De Domenico, F. Radicchi, 2025 - Identification and Optimization of High-Performance Passing Networks in Football]",
-          "score": 0.1213
-        },
-        {
           "chunk_id": "tactics_juego_de_posicion_c44",
           "citation": "[Spielverlagerung Editorial Staff, 2014 - Juego de Posición under Pep Guardiola]",
           "score": 0.1212
+        },
+        {
+          "chunk_id": "tactics_juego_de_posicion_c70",
+          "citation": "[Spielverlagerung Editorial Staff, 2014 - Juego de Posición under Pep Guardiola]",
+          "score": 0.1194
         }
       ],
       "rrf_order": [
@@ -5998,8 +5998,8 @@
           "score": 0.0135
         },
         {
-          "chunk_id": "dandrea_2025_high_performance_passing_networks_p2_c2",
-          "citation": "[A. D'Andrea, M. De Domenico, F. Radicchi, 2025 - Identification and Optimization of High-Performance Passing Networks in Football]",
+          "chunk_id": "tactics_juego_de_posicion_c44",
+          "citation": "[Spielverlagerung Editorial Staff, 2014 - Juego de Posición under Pep Guardiola]",
           "score": 0.0135
         },
         {
@@ -6008,7 +6008,7 @@
           "score": 0.0133
         },
         {
-          "chunk_id": "tactics_juego_de_posicion_c44",
+          "chunk_id": "tactics_juego_de_posicion_c70",
           "citation": "[Spielverlagerung Editorial Staff, 2014 - Juego de Posición under Pep Guardiola]",
           "score": 0.0133
         }
@@ -6063,6 +6063,11 @@
           "chunk_id": "tactics_juego_de_posicion_c78",
           "citation": "[Spielverlagerung Editorial Staff, 2014 - Juego de Posición under Pep Guardiola]",
           "score": -11.1762
+        },
+        {
+          "chunk_id": "tactics_juego_de_posicion_c70",
+          "citation": "[Spielverlagerung Editorial Staff, 2014 - Juego de Posición under Pep Guardiola]",
+          "score": -11.182
         },
         {
           "chunk_id": "tactics_juego_de_posicion_c41",
@@ -6133,11 +6138,6 @@
           "chunk_id": "tactics_dismarking_methods_c4",
           "citation": "[Spielverlagerung Editorial Staff, 2017 - Tactical Theory: the various methods of dismarking]",
           "score": -11.2293
-        },
-        {
-          "chunk_id": "dandrea_2025_high_performance_passing_networks_p2_c2",
-          "citation": "[A. D'Andrea, M. De Domenico, F. Radicchi, 2025 - Identification and Optimization of High-Performance Passing Networks in Football]",
-          "score": -11.2299
         },
         {
           "chunk_id": "tactics_juego_de_posicion_c29",

@@ -32,11 +32,16 @@ RRF_K = 60  # Constante de Reciprocal Rank Fusion
 # Seuil de pertinence du cross-encoder (logit brut de ms-marco-MiniLM-L-6-v2).
 # Les chunks dont le score de reranking est inferieur sont ecartes ; si aucun ne passe,
 # le noeud RAG signale `sources_sufficient=False` et le rapport doit l'indiquer.
-# Calibration sur les 15 requetes de reference : avant correction, meilleurs chunks hors sujet
-# <= -5.2 et 48 chunks du top 4 des requetes en corpus >= 2.5 ; apres re-indexation (chunks
-# de ~220 tokens), hors sujet <= -6.9 et top 4 en corpus >= 3.2. 0.0 est la frontiere naturelle
-# du logit (sigmoid = 0.5) et se situe au milieu de l'ecart. Voir eval/RAPPORT_CORRECTIONS.md.
-RERANK_MIN_SCORE = 0.0
+# Calibration sur eval/pipeline_queries.json (18 requetes construites comme le pipeline : question +
+# topics + zones + cles de deltas), meilleur chunk par requete :
+#   en corpus -3.0 a +1.4 (12 requetes) ; football hors corpus -8.2 et -5.0 ; hors sujet -8.6 a -5.7,
+#   sauf un cas a -2.6 (hors sujet auquel le routeur a attribue des topics de football par defaut).
+# Le logit 0.0 (sigmoid 0.5) rejetait 7 requetes en corpus sur 12 : les cles de deltas ajoutees a
+# la requete abaissent les scores. Toute valeur de ]-5.0, -3.0] garde les 12 requetes en corpus et
+# ecarte les 5 requetes hors corpus separables ; -4.0 en est le milieu. Les 15 requetes "propres" de
+# eval/baseline_queries.json restent correctement classees (en corpus >= 3.2, hors sujet <= -6.9).
+# Voir eval/RAPPORT_CORRECTIONS.md.
+RERANK_MIN_SCORE = -4.0
 
 # Modèles par défaut
 DENSE_EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
