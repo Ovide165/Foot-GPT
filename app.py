@@ -7,7 +7,7 @@ from PIL import Image
 import streamlit as st
 
 import importlib
-from src.app_service import analyze, verdict_view
+from src.app_service import analyze, chunk_rows, matches_available_label, verdict_view
 from src.cache.semantic_cache import GLOBAL_SEMANTIC_CACHE
 from src.data_mining.db_connection import ReadOnlyDBConnection
 from src.llm_factory import DEMO_MODE_BANNER, LLMFactory
@@ -223,17 +223,19 @@ with tab_coach:
         )
 
         st.markdown(
-            """
+            f"""
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; padding: 0 4px;">
                 <span class="section-badge-title">SELECT A FIXTURE TO ANALYZE</span>
-                <span style="font-size: 11.5px; color: #64748B; font-family: 'JetBrains Mono', monospace;">3 MATCHES AVAILABLE</span>
+                <span style="font-size: 11.5px; color: #64748B; font-family: 'JetBrains Mono', monospace;">{matches_available_label(len(match_options))}</span>
             </div>
             """,
             unsafe_allow_html=True,
         )
 
-        m_cols = st.columns(3, gap="medium")
-        for idx, (col, (label, meta)) in enumerate(zip(m_cols, match_options.items())):
+        card_slots = []
+        for row in chunk_rows(list(match_options.items()), 3):
+            card_slots.extend(zip(st.columns(3, gap="medium"), row))
+        for idx, (col, (label, meta)) in enumerate(card_slots):
             m_info = MATCH_METADATA.get(meta["match_id"], {
                 "stage": "FIFA WORLD CUP 2022",
                 "stadium": "Qatar 2022 Venue",

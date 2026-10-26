@@ -16,6 +16,21 @@ TimeRange = Tuple[int, int]
 Runner = Callable[..., Dict[str, Any]]
 
 
+def matches_available_label(count: int) -> str:
+    """Libelle du portail : le nombre reel de matchs disposant d'evenements en base."""
+    return f"{count} MATCH{'ES' if count != 1 else ''} AVAILABLE"
+
+
+def corpus_explorer_title(chunk_count: Optional[int]) -> str:
+    """Titre de l'explorateur RAG avec le nombre reel de chunks indexes (sans nombre si inconnu)."""
+    return "RAG CORPUS EXPLORER" if chunk_count is None else f"RAG CORPUS EXPLORER ({chunk_count} CHUNKS)"
+
+
+def chunk_rows(items: List[Any], size: int = 3) -> List[List[Any]]:
+    """Decoupe en lignes de `size` elements (cartes de matchs : aucune n'est masquee au-dela de 3)."""
+    return [items[i:i + size] for i in range(0, len(items), size)]
+
+
 def scope_of(is_global_view: bool) -> str:
     return "global" if is_global_view else "window"
 
