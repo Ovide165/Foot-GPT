@@ -142,7 +142,7 @@ Correction ultérieure : les 3 guides ont maintenant `year: 2026` dans leur fron
 
 ## 6. Affirmations de la documentation et du portfolio à corriger ou nuancer
 
-Rien n'a été modifié ici (le portfolio est exclu du dépôt via `.git/info/exclude` et n'a pas été touché). Les chiffres de chunks de `state.md` et `PIPELINE_RAG_HYBRIDE.md` ont été mis à jour (étape 2d) ; le reste est à traiter.
+**Mise à jour après le nettoyage de la documentation :** les affirmations ci-dessous qui figurent dans des fichiers suivis par git (`README.md`, `state.md`, `PIPELINE_RAG_HYBRIDE.md`, `ARCHITECTURE_LANGGRAPH.md`, `GUIDE_LATENCE_TOKENS_LLMOPS.md`) ont été corrigées. Restent à traiter les fichiers exclus du dépôt via `.git/info/exclude` (`PORTFOLIO_CASE_STUDY.md`, `PORTFOLIO_MODULE_C_PRODUCTION_LLMOPS.md`, `DOC_VIDEO_SHOWCASE_TIME_SAVER.md`), qui n'ont pas été touchés. Le nettoyage a aussi retiré, dans les fichiers suivis, des affirmations non listées plus bas : latence « 3,5 à 8 s » (mesuré : 58,6 à 114,2 s sur `benchmark_results.json`), nœud « HITL » inexistant, « Text-to-SQL » (les requêtes sont écrites à l'avance), « suppression de l'hallucination », bascule automatique entre fournisseurs en cas de 429 (la bascule se fait entre modèles Groq), « -30 % de latence » par parallélisation (non mesuré, et `deep_rag` dépend de `sql_miner`). Ces mêmes affirmations sont probablement présentes dans les fichiers hors dépôt.
 
 | Affirmation | Où | Statut |
 |---|---|---|
@@ -158,7 +158,7 @@ Rien n'a été modifié ici (le portfolio est exclu du dépôt via `.git/info/ex
 | « L'injection de 4 chunks théoriques complets alourdit le prompt » | GUIDE_LATENCE_TOKENS_LLMOPS.md l. 86 | Faux avant (chunks tronqués à 800 caractères, 42,6 % du texte) ; vrai maintenant, pour un volume équivalent (~835 tokens) |
 | « Parallélisation async sql_miner + deep_rag (-30 % latence) » | GUIDE_LATENCE_TOKENS_LLMOPS.md l. 69, 78 ; ARCHITECTURE_LANGGRAPH.md l. 111 | Non concerné par ces corrections (c'est une roadmap), mais le « -30 % » n'est pas mesuré ; le retrieval lui-même ne coûte que ~5 ms |
 | Le RAG utilise FastEmbed ; Tech Stack « FastEmbed » | PIPELINE_RAG_HYBRIDE.md l. 4, PORTFOLIO_CASE_STUDY.md l. 4 | Inexact : le RAG utilise sentence-transformers (`all-MiniLM-L6-v2`) ; FastEmbed n'est utilisé que par le cache sémantique |
-| « 32 tests automatisés (100 % pass) » | PORTFOLIO_MODULE_C_PRODUCTION_LLMOPS.md l. 124 | Périmé : 25 tests au départ, 63 maintenant |
+| « 32 tests automatisés (100 % pass) » | PORTFOLIO_MODULE_C_PRODUCTION_LLMOPS.md l. 124 | Périmé : 25 tests au départ, 72 maintenant |
 | Liens de fichiers `file:///Users/oscarbrunet/Projects/Football_Agent_LangGraph_RAG/...` | PORTFOLIO_CASE_STUDY.md l. 142, 144 | Chemin d'un ancien emplacement du projet, qui n'existe plus |
 | « Chunking avec overlap » (chunker.py) | PORTFOLIO_CASE_STUDY.md l. 330 | À préciser : overlap de 40 tokens en phrases entières, taille cible 220 tokens (au lieu de 500 ou 600 mots) |
 
