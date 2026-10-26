@@ -2,7 +2,7 @@
 
 > **Last updated:** 2026-10-26  
 > **Status:** Working prototype on StatsBomb World Cup 2022 data; RAG reliability fixes applied (see `eval/RAPPORT_CORRECTIONS.md`)  
-> **Tests:** 72 passing (`pytest`, no API key needed: `MockChatModel` fallback). Retrieval tests require `python index_knowledge_base.py` to have been run  
+> **Tests:** 104 passing (`pytest`, no API key needed: `MockChatModel` fallback). Retrieval tests require `python index_knowledge_base.py` to have been run  
 > **Language:** English only (questions, corpus, reports)  
 > **UI validation:** checked manually across Desktop (1280px), Semi-Screen (950px), Tablet (780px) & Mobile (550px); not automated  
 > **Active Environment:** Python 3.12 (venv)  
@@ -145,7 +145,7 @@ Foot-GPT/
 │
 ├── eval/                                # Reference queries, retrieval snapshots, RAPPORT_CORRECTIONS.md
 │
-├── tests/                               # Test suite (72 tests: miner, phases, guardrails, schemas, RAG,
+├── tests/                               # Test suite (104 tests: miner, phases, guardrails, schemas, RAG,
 │                                        #   chunking, citations, threshold calibration, cache, docs guard)
 │
 └── data/                                # Local persistence datasets

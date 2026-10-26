@@ -2,6 +2,7 @@
 Factory multi-providers pour l'instanciation des modèles LLM (Groq, OpenAI, Gemini, Ollama, Mock).
 """
 
+import logging
 import os
 from typing import Any, Dict, Optional, Type
 from dotenv import load_dotenv
@@ -9,6 +10,29 @@ from pydantic import BaseModel
 
 # Chargement des variables d'environnement (.env)
 load_dotenv()
+
+logger = logging.getLogger(__name__)
+
+DEMO_MODE_BANNER = "MODE DÉMONSTRATION : aucun LLM réel"
+
+# Valeurs d'exemple de .env.example : une cle qui en contient une n'est pas une vraie cle
+_PLACEHOLDER_MARKERS = ("votre_cle", "your_key", "your-key", "changeme")
+
+
+def _is_usable_key(key: Optional[str]) -> bool:
+    """Vrai pour une cle renseignee qui n'est pas un exemple (les vraies cles Gemini commencent par « AIza »)."""
+    return bool(key) and not any(marker in key.lower() for marker in _PLACEHOLDER_MARKERS)
+
+
+def _demo_model(name: str, warn: bool) -> "MockChatModel":
+    """Repli sur le modele factice : jamais silencieux (avertissement dans les logs)."""
+    if warn:
+        logger.warning(
+            "%s: aucun LLM reel disponible (cle absente, invalide ou fournisseur indisponible); "
+            "repli sur le modele factice '%s'. Les rapports produits ne sont PAS de vraies analyses.",
+            DEMO_MODE_BANNER, name,
+        )
+    return MockChatModel(model_name=name)
 
 
 class MockChatModel:
@@ -114,7 +138,15 @@ class LLMFactory:
         return (override_provider or os.getenv("LLM_PROVIDER", "groq")).lower()
 
     @classmethod
-    def get_fast_model(cls, provider: Optional[str] = None, temperature: float = 0.0) -> Any:
+    def is_demo_mode(cls) -> bool:
+        """Vrai si un des modeles du pipeline est le modele factice (aucun LLM reel)."""
+        return any(
+            isinstance(model, MockChatModel)
+            for model in (cls.get_fast_model(warn=False), cls.get_reasoning_model(warn=False))
+        )
+
+    @classmethod
+    def get_fast_model(cls, provider: Optional[str] = None, temperature: float = 0.0, warn: bool = True) -> Any:
         """
         Retourne un modèle ultra-rapide (Router & Critic).
         - Groq: groq/compound-mini (70K TPM, avec fallback groq/compound)
@@ -128,7 +160,7 @@ class LLMFactory:
         gemini_api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
 
         groq_fast_model = os.getenv("GROQ_FAST_MODEL", "openai/gpt-oss-20b")
-        if prov == "groq" and groq_api_key and not groq_api_key.startswith("gsk_votre_cle"):
+        if prov == "groq" and _is_usable_key(groq_api_key):
             try:
                 from langchain_groq import ChatGroq
                 primary = ChatGroq(
@@ -147,7 +179,7 @@ class LLMFactory:
             except Exception:
                 pass
 
-        if prov == "openai" and openai_api_key and not openai_api_key.startswith("sk-votre_cle"):
+        if prov == "openai" and _is_usable_key(openai_api_key):
             try:
                 from langchain_openai import ChatOpenAI
                 return ChatOpenAI(
@@ -158,7 +190,7 @@ class LLMFactory:
             except Exception:
                 pass
 
-        if prov in ("gemini", "google") and gemini_api_key and not gemini_api_key.startswith("AIza"):
+        if prov in ("gemini", "google") and _is_usable_key(gemini_api_key):
             try:
                 from langchain_google_genai import ChatGoogleGenerativeAI
                 return ChatGoogleGenerativeAI(
@@ -176,10 +208,10 @@ class LLMFactory:
             except Exception:
                 pass
 
-        return MockChatModel(model_name="mock-fast-8b")
+        return _demo_model("mock-fast-8b", warn)
 
     @classmethod
-    def get_reasoning_model(cls, provider: Optional[str] = None, temperature: float = 0.2) -> Any:
+    def get_reasoning_model(cls, provider: Optional[str] = None, temperature: float = 0.2, warn: bool = True) -> Any:
         """
         Retourne un modèle à haute capacité de raisonnement et rédaction (Synthesizer).
         - Groq: qwen/qwen3.8-27b (1.7s latency avec fallback automatique sur openai/gpt-oss-120b)
@@ -193,7 +225,7 @@ class LLMFactory:
         gemini_api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
 
         groq_reasoning_model = os.getenv("GROQ_REASONING_MODEL", "qwen/qwen3.8-27b")
-        if prov == "groq" and groq_api_key and not groq_api_key.startswith("gsk_votre_cle"):
+        if prov == "groq" and _is_usable_key(groq_api_key):
             try:
                 from langchain_groq import ChatGroq
                 primary = ChatGroq(
@@ -212,7 +244,7 @@ class LLMFactory:
             except Exception:
                 pass
 
-        if prov == "openai" and openai_api_key and not openai_api_key.startswith("sk-votre_cle"):
+        if prov == "openai" and _is_usable_key(openai_api_key):
             try:
                 from langchain_openai import ChatOpenAI
                 return ChatOpenAI(
@@ -223,7 +255,7 @@ class LLMFactory:
             except Exception:
                 pass
 
-        if prov in ("gemini", "google") and gemini_api_key and not gemini_api_key.startswith("AIza"):
+        if prov in ("gemini", "google") and _is_usable_key(gemini_api_key):
             try:
                 from langchain_google_genai import ChatGoogleGenerativeAI
                 return ChatGoogleGenerativeAI(
@@ -241,4 +273,4 @@ class LLMFactory:
             except Exception:
                 pass
 
-        return MockChatModel(model_name="mock-reasoning-70b")
+        return _demo_model("mock-reasoning-70b", warn)

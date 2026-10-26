@@ -30,6 +30,8 @@ class TacticalAgentState(TypedDict):
     match_id: int
     thread_id: str
     user_time_range: Optional[Tuple[int, int]]
+    # True quand l'utilisateur a choisi la phase « Global » (match entier), quelle que soit sa duree
+    is_global_view: bool
     
     # 2. Sortie Nœud 1 (Router)
     tactical_plan: Optional[TacticalPlan]

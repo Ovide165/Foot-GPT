@@ -121,7 +121,7 @@ def run_benchmark_for_provider(provider_name: str, max_questions: int = 10) -> D
             elapsed_ms = round((time.perf_counter() - t_start) * 1000, 1)
             report = state.get("final_report", "")
             verdict = state.get("critic_verdict")
-            faith = verdict.faithfulness_score if verdict else 0.95
+            faith = verdict.faithfulness_score if verdict else None  # pas de valeur par defaut inventee
             
             # Vérification du format en 3 volets
             has_v1 = "Volet 1" in report or "Diagnostic" in report
@@ -137,7 +137,8 @@ def run_benchmark_for_provider(provider_name: str, max_questions: int = 10) -> D
             citations_count += num_citations
 
             latencies.append(elapsed_ms)
-            faithfulness_scores.append(faith)
+            if faith is not None:
+                faithfulness_scores.append(faith)
 
             results.append({
                 "test_id": tc["id"],
@@ -146,9 +147,10 @@ def run_benchmark_for_provider(provider_name: str, max_questions: int = 10) -> D
                 "faithfulness": faith,
                 "has_3_volets": all_volets,
                 "citations_used": num_citations,
-                "status": "PASS" if (all_volets and faith >= 0.85) else "WARN",
+                "status": "PASS" if (all_volets and faith is not None and faith >= 0.85) else "WARN",
             })
-            print(f" -> {elapsed_ms}ms | Faith={faith:.2f} | 3-Volets={all_volets}")
+            faith_txt = "n/a" if faith is None else f"{faith:.2f}"
+            print(f" -> {elapsed_ms}ms | Faith={faith_txt} | 3-Volets={all_volets}")
 
         except Exception as e:
             print(f" -> ERROR: {str(e)[:50]}")
@@ -165,7 +167,7 @@ def run_benchmark_for_provider(provider_name: str, max_questions: int = 10) -> D
     n = len(questions)
     valid_latencies = [l for l in latencies if l > 0]
     avg_lat = round(sum(valid_latencies) / len(valid_latencies), 1) if valid_latencies else 0.0
-    avg_faith = round(sum(faithfulness_scores) / len(faithfulness_scores), 2) if faithfulness_scores else 0.0
+    avg_faith = round(sum(faithfulness_scores) / len(faithfulness_scores), 2) if faithfulness_scores else None
     volet_pct = round((volets_compliance / n) * 100, 1)
 
     summary = {

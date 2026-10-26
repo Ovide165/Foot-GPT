@@ -37,6 +37,22 @@ def render_facts_table(match_facts: MatchFacts) -> None:
     st.dataframe(df, use_container_width=True, hide_index=True)
 
 
+def render_verdict_panel(view: Dict[str, Any]) -> None:
+    """Shows the critic verdict (PASS / FAIL), its faithfulness score and its anomalies."""
+    status = view["status"]
+    message = f"{view['headline']} Faithfulness (critic): {view['faithfulness']}."
+    if status == "passed":
+        st.success(message)
+    elif status == "failed_after_retries":
+        st.error(message)
+    else:
+        st.info(message)
+    if view["anomalies"]:
+        with st.expander(f"CRITIC ANOMALIES ({len(view['anomalies'])})", expanded=status == "failed_after_retries"):
+            for anomaly in view["anomalies"]:
+                st.markdown(f"- {anomaly}")
+
+
 def render_citations_panel(retrieved_chunks: List[Dict[str, Any]]) -> None:
     """Renders the theoretical literature citations panel."""
     if not retrieved_chunks:

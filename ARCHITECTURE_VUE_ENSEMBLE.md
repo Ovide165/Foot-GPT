@@ -39,10 +39,10 @@ Points à savoir : `data/football_rag.db` existe mais ne contient aucune table e
 - **Embedding** : `BAAI/bge-small-en-v1.5` via fastembed, sinon `all-MiniLM-L6-v2` (`semantic_cache.py:43-52`).
 - **Stockage** : liste Python en mémoire dans un singleton (`semantic_cache.py:40, 129`). Pas de persistance, pas d'expiration.
 - **Latence d'un hit** : mesurée par `perf_counter` (`semantic_cache.py:66, 89`).
-- **Ce qu'un hit restitue** : le rapport et la télémétrie ; l'interface reconstruit `match_facts=None` et `retrieved_chunks=[]` (`app.py:397-402`), donc **un rapport servi par le cache s'affiche sans panneau de citations ni tableau de faits**.
-- **Ce qui est stocké** : tout rapport non vide, **y compris un rapport que le critique a finalement refusé** (aucun test du verdict avant `set`, `app.py:414-422`).
+- **Ce qu'un hit restitue** : le rapport, la télémétrie, `match_facts`, les chunks cités, `sources_sufficient` et le verdict du critique (`src/app_service.py`, `result_from_cache`) : le panneau de citations, le tableau de faits et le verdict s'affichent comme pour une analyse fraîche. Les rapports `global` et `window` ont des entrées de cache séparées.
+- **Ce qui est stocké** : uniquement un rapport non vide dont le **verdict final du critique est PASS** (`is_cacheable`). Un rapport refusé n'est jamais mis en cache.
 
-**Défaut vérifié à l'exécution (voir §10, point 1) :** `app.py:9-11` fait `importlib.reload(src.cache.semantic_cache)` à chaque exécution du script Streamlit. Test fait : après un `reload`, `GLOBAL_SEMANTIC_CACHE` est une **nouvelle instance vide** (`same instance: False, entries: 0`). Comme Streamlit ré-exécute le script à chaque interaction (et `st.rerun()` suit chaque `set`), le cache est en pratique vidé avant de pouvoir servir.
+**Défaut corrigé (branche `fix/app-reliability`) :** `app.py` rechargeait `src.cache.semantic_cache` à chaque exécution du script Streamlit, ce qui recréait un cache vide ; le `importlib.reload` est supprimé et le cache survit aux reruns. Il reste en mémoire du processus (perdu au redémarrage).
 
 ---
 
@@ -166,8 +166,8 @@ Limites de forme : le critique reçoit `SOURCES_SUFFICIENT: bool(retrieved_chunk
   - colonne droite : rapport en 3 accordéons (`report_renderer.py:169-237`) + panneau de références (`report_renderer.py:40-54`).
 - **Citations** : affichées sous forme de liste de chaînes de citation uniquement (pas d'extrait de texte ni de score).
 - **Onglet 2 « Supervision & Benchmark »** (`app.py:639-656`) : télémétrie (latence totale, fidélité, latences par nœud + histogramme, `admin_dashboard.py:17-69`), banc d'essai multi-modèles, explorateur du corpus RAG, console SQL en lecture seule.
-- **Non affiché** : le **verdict du critique** (PASS/FAIL) et ses anomalies ne sont montrés nulle part. Seule la note de fidélité apparaît, avec **0,95 par défaut si absente** (`admin_dashboard.py:28`). Un rapport refusé deux fois s'affiche donc exactement comme un rapport validé.
-- Textes en dur périmés : « 3 MATCHES AVAILABLE » (`app.py:226`) alors que 4 matchs sont en base ; « 305 chunks » (`admin_dashboard.py:73-74`) alors que le corpus en compte 977.
+- **Verdict du critique** : affiché (`render_verdict_panel` : PASS / FAIL, note de fidélité, anomalies). Un rapport servi après 2 échecs porte l'avertissement « WARNING - Critic verdict: FAIL after 2 attempts ». La note de fidélité n'a plus de valeur par défaut : « non évaluée » si elle manque.
+- Textes périmés corrigés : le nombre de matchs (4) et de chunks (977) vient des données, et les 4 cartes de matchs s'affichent (la 4e était tronquée à 3 colonnes).
 
 ---
 
@@ -217,16 +217,16 @@ streamlit run app.py            # port 8501
 | `OPENAI_API_KEY`, `GEMINI_API_KEY`/`GOOGLE_API_KEY` | autres fournisseurs | `llm_factory.py:127-128` |
 | `ENVIRONMENT`, `LOG_LEVEL` | présentes dans `.env.example` / compose ; **non lues par le code Python** (grep sur `src/` et `app.py`) | `.env.example:10-11` |
 
-Tests : `pytest` (`pytest.ini`). Lancés dans `.venv` : **72 tests passés en 146 s**. Avec le Python système, la collecte échoue (dépendances absentes) : il faut utiliser le venv.
+Tests : `pytest` (`pytest.ini`), dans le `.venv`. Avec le Python système, la collecte échoue (dépendances absentes). Sans clé API, ils tournent sur le `MockChatModel`.
 
 ---
 
 ## 10. Les 5 points les plus fragiles (par gravité décroissante)
 
-1. **Le cache sémantique est vidé à chaque exécution du script Streamlit (grave, vérifié).** `app.py:9-11` recharge le module à chaque rerun, ce qui recrée un singleton vide (test exécuté : nouvelle instance, 0 entrée). Les métriques « latence d'un hit » et « coût zéro » du cache ne se réalisent donc pas dans l'application. De plus, un rapport refusé par le critique y serait mémorisé (`app.py:414-422`), et un hit n'affiche ni citations ni faits.
+1. ~~Le cache sémantique est vidé à chaque exécution du script Streamlit~~ **Corrigé** (voir §2).
 2. **La fidélité numérique, promesse centrale du produit, repose uniquement sur un LLM.** Aucun contrôle programmatique des chiffres (§6) ; le critique est le modèle « rapide » (gpt-oss-20b par défaut). En plus, après 2 tentatives (`graph.py:28`) le brouillon est servi même en FAIL (`graph.py:108-109`) et l'interface n'affiche pas le verdict (§7) ; la note de fidélité par défaut est 0,95 (`admin_dashboard.py:28`). Un utilisateur ne peut pas distinguer un rapport validé d'un rapport refusé.
-3. **Repli silencieux sur le modèle factice.** Sans clé valide, ou si l'import du fournisseur échoue, `LLMFactory` renvoie `MockChatModel` sans erreur ni avertissement (`llm_factory.py:179, 244`) ; ce mock produit un critique qui répond toujours PASS (l. 55-66) et un rapport avec des chiffres de la finale **codés en dur** (l. 94-102). Bug supplémentaire : la branche Gemini exige `not key.startswith("AIza")` (`llm_factory.py:161, 226`), alors que `.env.example:7` montre qu'une vraie clé commence par `AIza` : avec une vraie clé Gemini, le fournisseur est ignoré et le mock est utilisé. Le compose injecte aussi une clé factice par défaut (`docker-compose.yml:13`). Un rapport de démonstration peut donc être pris pour une analyse réelle.
-4. **Le mode « Global » est mal classé pour 3 matchs sur 4.** Le mode micro est décidé par `durée < 100` (`synthesizer_node.py:27`, `router_node.py:90`). La phase « Global » d'un match de 90-96 minutes (c'est le cas des trois matchs hors finale, d'après `data/cached_phases.json` : fin à 96, 95, 93) est traitée comme une séquence précise : le plan passe en `DIAGNOSTIC_SEQUENCE`, le synthétiseur n'injecte pas la structure des phases et interdit d'analyser d'autres phases (l. 35-37). Seule la finale (0-120) reçoit le vrai traitement macro.
+3. ~~Repli silencieux sur le modèle factice~~ **Corrigé** : bandeau « MODE DÉMONSTRATION : aucun LLM réel » dans l'interface et avertissement dans les logs à chaque repli ; la condition Gemini ne rejette plus les vraies clés `AIza…`.
+4. ~~Le mode « Global » est mal classé~~ **Corrigé** : un indicateur explicite `is_global_view` remplace la règle `durée < 100`.
 5. **Pipeline calé sur un seul match et sur des données fixes.** La table de joueurs du routeur (`router_node.py:48-73`), les profils de phases par `match_id` (`match_miner.py:487-593`, fonction inutilisée), l'équipe de repli « Argentina/France » (`sql_miner_node.py:34`, `router_node.py:95`) et les équipes de la liste d'exemples sont spécifiques à la finale 2022. S'ajoutent : la finale est le seul match avec un jeu de phases validé à la main ; `significant_deltas` ne porte que sur une métrique et n'est pas filtré ni trié (§4.3) ; la qualité des statistiques de `LIKE '%"pass_outcome"%'` sur du JSON texte dépend du format exact de sérialisation (`queries.py:21, 25`), sans test de non-régression visible ici. Cette fragilité est moins immédiate que les quatre premières, mais elle limite la généralisation à d'autres matchs.
 
 Autres points mineurs repérés : bug latent dans le repli du routeur (`meta` utilisé alors qu'il peut ne pas être défini si la lecture des métadonnées a échoué, `router_node.py:95`) ; latence totale sous-estimée lors d'une relance, car la latence du synthétiseur est écrasée à chaque passage (`synthesizer_node.py:155`, `graph.py:112-118`) ; garde-fous (`guardrails.py`) appliqués uniquement à la question libre, pas aux boutons de phase, et limités à quelques regex.
