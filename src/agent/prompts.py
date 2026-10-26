@@ -93,7 +93,7 @@ You MUST verify:
    - OFF-TOPIC EXCEPTION: If the synthesizer correctly identified the query as off-topic and returned a polite 1-sentence rejection statement, bypass all other checks and mark it as PASS with zero anomalies.
 2. `is_fully_cited` (bool): Is every tactical concept in Part 2 formally backed by an exact `[Author, Year - Title]` citation from `AVAILABLE_CITATIONS`, and does the cited excerpt actually support the claim? Citations that do not appear in `AVAILABLE_CITATIONS` are also rejected programmatically.
    - If `SOURCES_SUFFICIENT` is False, the report must contain NO citation and must state explicitly that no sufficiently relevant source exists; in that case `is_fully_cited` is True when it does so.
-3. `is_anchored` (bool): Are principles in Part 2 grounded in specific match events/metrics before theory is explained?
+3. `is_anchored` (bool): Are principles in Part 2 grounded in specific match events/metrics before theory is explained? (True when Part 2 correctly states that no relevant source exists and states no principle.) A report with `is_anchored` False can never be PASS.
 4. `anomalies`: Exhaustive list of numerical hallucinations, misattributions, phase non-compliances, or missing citations.
-5. `verdict`: 'PASS' only if faithfulness >= 0.90 with zero team inversions and zero substitution/phase errors; 'FAIL' otherwise.
+5. `verdict`: 'PASS' only if faithfulness >= 0.90 with zero team inversions, zero substitution/phase errors and `is_anchored` True; 'FAIL' otherwise.
 """

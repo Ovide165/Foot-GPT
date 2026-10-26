@@ -77,3 +77,31 @@ def test_critic_fails_any_citation_when_no_chunks(monkeypatch):
 def test_critic_prompt_mentions_programmatic_check_and_insufficient_sources():
     assert "SOURCES_SUFFICIENT" in CRITIC_SYSTEM_PROMPT
     assert "programmatically" in CRITIC_SYSTEM_PROMPT
+
+
+class _UnanchoredLLM(MockChatModel):
+    """Juge factice qui trouve le rapport non ancre mais le laisse en PASS."""
+
+    def with_structured_output(self, schema):
+        class _Runner:
+            def invoke(self, messages):
+                return VerificationVerdict(
+                    is_faithful=True, faithfulness_score=0.98, is_fully_cited=True, is_anchored="false",
+                    citation_coverage_score=0.95, anomalies=[], verdict="PASS",
+                )
+        return _Runner()
+
+
+def test_unanchored_report_cannot_pass(monkeypatch):
+    monkeypatch.setattr(LLMFactory, "get_fast_model", staticmethod(lambda **kw: _UnanchoredLLM()))
+    chunks = [{"citation": ALLOWED[0], "content": "text"}]
+    state = {"draft_report": "Part 2 " + ALLOWED[0], "match_facts": None, "retrieved_chunks": chunks, "execution_telemetry": {}}
+    out = critic_module.critic_node(state)
+    assert out["critic_verdict"].is_anchored is False
+    assert out["critic_verdict"].verdict == "FAIL"
+    assert "START with a concrete match fact" in out["critic_feedback"]
+
+
+def test_critic_prompt_and_schema_agree_on_is_anchored():
+    assert "is_anchored" in CRITIC_SYSTEM_PROMPT
+    assert "is_anchored" in VerificationVerdict.model_fields

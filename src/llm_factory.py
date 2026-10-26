@@ -58,6 +58,7 @@ class MockChatModel:
                         is_faithful=True,
                         faithfulness_score=0.98,
                         is_fully_cited=True,
+                        is_anchored=True,
                         citation_coverage_score=0.95,
                         anomalies=[],
                         feedback_for_synthesizer=None,

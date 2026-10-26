@@ -78,6 +78,7 @@ def critic_node(state: TacticalAgentState) -> Dict[str, Any]:
             is_faithful=False,
             faithfulness_score=0.0,
             is_fully_cited=False,
+            is_anchored=False,
             citation_coverage_score=0.0,
             anomalies=[
                 AuditAnomaly(
@@ -90,6 +91,24 @@ def critic_node(state: TacticalAgentState) -> Dict[str, Any]:
             feedback_for_synthesizer=f"Critic audit evaluation failed due to service error: {str(e)[:150]}",
             verdict="FAIL",
         )
+
+    # Golden Anchoring Rule : un rapport non ancre ne peut pas etre valide, la boucle de
+    # correction (should_continue_after_critic) repart alors sur le synthetiseur
+    if not verdict.is_anchored:
+        anomalies = list(verdict.anomalies)
+        if not any(a.category == "unanchored_principle" for a in anomalies):
+            anomalies.append(
+                AuditAnomaly(
+                    category="unanchored_principle",
+                    claim_in_text="Part 2 principle without a preceding match fact",
+                    truth_in_facts=None,
+                    correction_guidance=(
+                        "Each theoretical principle in Part 2 must START with a concrete match fact "
+                        "(minute, player, zone or metric from MATCH_FACTS) before the theory and its citation."
+                    ),
+                )
+            )
+        verdict = verdict.model_copy(update={"verdict": "FAIL", "anomalies": anomalies})
 
     # Verification deterministe des citations, independante du jugement du LLM
     citation_anomalies = audit_citations(draft, retrieved_chunks)
