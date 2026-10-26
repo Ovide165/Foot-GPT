@@ -1,0 +1,96 @@
+"""
+Snapshot du retrieval hybride pour un jeu de requetes de reference.
+
+Pour chaque requete : top 15 BM25, top 15 dense, ordre RRF, scores du reranker sur
+tous les candidats fusionnes (top 4 marques), ainsi que les statistiques de chunks
+(tokens vus par l'embedding). Les resultats servent a calibrer RERANK_MIN_SCORE.
+
+Usage : python eval/snapshot_retrieval.py eval/results_before.json
+"""
+
+import json
+import statistics
+import sys
+from pathlib import Path
+from typing import Any, Dict, List
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
+from src import config
+from src.rag import chunker
+from src.rag.bm25_retriever import BM25Retriever
+from src.rag.reranker import CrossEncoderReranker
+from src.rag.vector_store import VectorStoreManager
+
+QUERIES_PATH = Path(__file__).resolve().parent / "baseline_queries.json"
+EMBEDDING_MAX_TOKENS = 256
+
+
+def embedded_text(chunk) -> str:
+    """Texte reellement envoye a l'embedding (contenu seul avant correction, titre inclus apres)."""
+    fn = getattr(chunker, "chunk_embedding_text", None)
+    return fn(chunk) if fn else chunk.content
+
+
+def chunk_stats(chunks: List[Any], tokenizer) -> Dict[str, Any]:
+    counts = [len(tokenizer(embedded_text(c), add_special_tokens=False)["input_ids"]) for c in chunks]
+    limit = EMBEDDING_MAX_TOKENS - 2  # [CLS] et [SEP]
+    return {
+        "n_chunks": len(counts),
+        "median_tokens": statistics.median(counts),
+        "p90_tokens": sorted(counts)[int(0.9 * len(counts))],
+        "max_tokens": max(counts),
+        "pct_truncated_by_embedding": round(100 * sum(c > limit for c in counts) / len(counts), 1),
+        "mean_share_of_text_seen_pct": round(100 * statistics.mean(min(1.0, limit / c) for c in counts), 1),
+    }
+
+
+def brief(chunk, score=None) -> Dict[str, Any]:
+    d = {"chunk_id": chunk.chunk_id, "citation": chunk.format_citation()}
+    if score is not None:
+        d["score"] = round(float(score), 4)
+    return d
+
+
+def main(out_path: str) -> None:
+    queries = json.loads(QUERIES_PATH.read_text(encoding="utf-8"))
+    bm25 = BM25Retriever()
+    assert bm25.load(), "Index BM25 introuvable : lancer index_knowledge_base.py"
+    vs = VectorStoreManager()
+    reranker = CrossEncoderReranker()
+    assert reranker.model is not None, "Cross-encoder indisponible : scores non representatifs"
+
+    tokenizer = vs.embedding_fn._model.tokenizer  # tokenizer MiniLM
+    results: List[Dict[str, Any]] = []
+    for q in queries:
+        sparse = bm25.retrieve(q["query"], top_k=config.TOP_K_SPARSE)
+        dense = vs.retrieve(q["query"], top_k=config.TOP_K_DENSE)
+
+        rrf: Dict[str, float] = {}
+        cmap = {}
+        for results_list in (sparse, dense):
+            for rank, (c, _) in enumerate(results_list, start=1):
+                cmap[c.chunk_id] = c
+                rrf[c.chunk_id] = rrf.get(c.chunk_id, 0.0) + 1.0 / (config.RRF_K + rank)
+        order = sorted(rrf, key=lambda k: rrf[k], reverse=True)
+        candidates = [cmap[k] for k in order]
+        reranked = reranker.rerank(q["query"], candidates, top_n=len(candidates))
+
+        results.append({
+            "id": q["id"], "type": q["type"], "query": q["query"],
+            "bm25_top": [brief(c, s) for c, s in sparse],
+            "dense_top": [brief(c, s) for c, s in dense],
+            "rrf_order": [dict(brief(cmap[k], rrf[k])) for k in order],
+            "reranked_all": [brief(c, s) for c, s in reranked],
+            "reranked_top4": [brief(c, s) for c, s in reranked[: config.TOP_K_RERANKED]],
+        })
+        print(f"{q['id']} ({q['type']}): top1 rerank = {reranked[0][1]:.3f}")
+
+    all_chunks = bm25.chunks
+    payload = {"chunk_stats": chunk_stats(all_chunks, tokenizer), "queries": results}
+    Path(out_path).write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
+    print(json.dumps(payload["chunk_stats"], indent=2))
+
+
+if __name__ == "__main__":
+    main(sys.argv[1] if len(sys.argv) > 1 else "eval/results_after.json")

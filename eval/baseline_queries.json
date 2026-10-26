@@ -1,0 +1,17 @@
+[
+  {"id": "q01", "type": "in_corpus", "query": "How does a team protect itself against counters through rest-defense when attacking? Rest-Defense defensive transition turnovers under pressure"},
+  {"id": "q02", "type": "in_corpus", "query": "Exploiting the half-spaces to overload the opponent's defensive line. Half-Spaces left half space zone 14"},
+  {"id": "q03", "type": "in_corpus", "query": "Counterpressing after ball loss to win the ball back within seconds. Gegenpressing high recoveries"},
+  {"id": "q04", "type": "in_corpus", "query": "Variations of counterpressing and when to drop instead of pressing. Counterpressing variations"},
+  {"id": "q05", "type": "in_corpus", "query": "Zonal marking and zonal coverage of space in the defensive block. Zonal Marking compactness"},
+  {"id": "q06", "type": "in_corpus", "query": "Positional play and juego de posicion principles of Guardiola. Juego de Posicion Passing Networks"},
+  {"id": "q07", "type": "in_corpus", "query": "Vertical build-up passing through the lines against a high press. Vertical Build-up Passing"},
+  {"id": "q08", "type": "in_corpus", "query": "Dismarking methods to lose a marker and receive between the lines. Dismarking"},
+  {"id": "q09", "type": "in_corpus", "query": "Blind side movement and exploiting the blind side of defenders. Blind Side Potential"},
+  {"id": "q10", "type": "in_corpus", "query": "Passing network centrality and team vulnerability when key players are marked. Passing Networks centrality"},
+  {"id": "q11", "type": "in_corpus", "query": "Valuing player actions with VAEP and expected threat models. Action values xG"},
+  {"id": "q12", "type": "in_corpus", "query": "Line-breaking passes and clustering of passing sequences. Line-breaking passes final third"},
+  {"id": "o01", "type": "off_topic", "query": "What is the correct scrum engagement technique and how do rugby props bind on the loosehead side?"},
+  {"id": "o02", "type": "off_topic", "query": "How many grams of protein per day should a marathon runner eat and which carbohydrates are best before a race?"},
+  {"id": "o03", "type": "off_topic", "query": "How does the video assistant referee review protocol work for offside and penalty decisions in cricket tournaments?"}
+]
