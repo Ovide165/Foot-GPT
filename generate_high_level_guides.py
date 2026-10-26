@@ -1,3 +1,8 @@
+# ATTENTION - NE PAS RELANCER CE SCRIPT.
+# Il est desynchronise des guides indexes : ses constantes GUIDE_*_MD sont en francais, alors que
+# data/high_level_guides/*.md (indexes par index_knowledge_base.py) sont en anglais et portent
+# desormais un champ `year`. Le relancer ecraserait ces guides par des versions francaises sans
+# annee, hors du perimetre linguistique de foot-GPT (anglais uniquement).
 """
 Générateur des 3 Guides Tactiques High-Level au format PDF (ReportLab) et Markdown.
 
