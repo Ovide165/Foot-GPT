@@ -24,6 +24,8 @@ def router_node(state: TacticalAgentState) -> Dict[str, Any]:
     structured_llm = llm.with_structured_output(TacticalPlan)
 
     user_time_range = state.get("user_time_range")
+    # Sequence ciblee = une phase choisie par l'utilisateur, sauf la vue « Global » (match entier)
+    is_targeted_window = bool(user_time_range) and not state.get("is_global_view")
     
     from src.data_mining.match_miner import MatchMiner
     try:
@@ -87,14 +89,14 @@ def router_node(state: TacticalAgentState) -> Dict[str, Any]:
                     existing.insert(0, dp)
             plan.target_players = existing
         # Si le coach a sélectionné une séquence précise (ex: 0-40, 70-85), garantir le ciblage
-        if user_time_range and (user_time_range[1] - user_time_range[0] < 100):
+        if is_targeted_window:
             plan.time_windows = [user_time_range]
             plan.query_type = QueryType.DIAGNOSTIC_SEQUENCE
     except Exception:
         # Fallback de secours robuste et dynamique
         fallback_teams = [meta.get("home_team", "Home"), meta.get("away_team", "Away")] if "home_team" in meta else ["Argentina", "France"]
         fallback_players = detected_players if detected_players else None
-        if user_time_range and (user_time_range[1] - user_time_range[0] < 100):
+        if is_targeted_window:
             plan = TacticalPlan(
                 query_type=QueryType.DIAGNOSTIC_SEQUENCE,
                 game_phases=["Organisation Offensive", "Transition Défensive"],

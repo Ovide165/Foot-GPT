@@ -24,7 +24,7 @@ def synthesizer_node(state: TacticalAgentState) -> Dict[str, Any]:
     iteration = state.get("iteration_count", 0)
 
     user_time_range = state.get("user_time_range")
-    is_micro_mode = user_time_range is not None and (user_time_range[1] - user_time_range[0] < 100)
+    is_micro_mode = user_time_range is not None and not state.get("is_global_view")
 
     # 1. Formatage des MatchFacts pour injection dans le contexte
     facts_text = ""

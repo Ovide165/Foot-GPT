@@ -93,6 +93,7 @@ def analyze(
         match_id=match_id,
         thread_id=f"session_{match_id}_{time.time()}",
         user_time_range=time_range,
+        is_global_view=is_global_view,
     )
     result["from_cache"] = False
     store_in_cache(cache, query, match_id, time_range, result, is_global_view)
