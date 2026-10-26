@@ -18,9 +18,12 @@ RESEARCH_PAPERS_DIR = DATA_DIR / "research_papers"
 CHROMA_PERSIST_DIR = DATA_DIR / "chroma_db"
 BM25_INDEX_PATH = DATA_DIR / "bm25_index.pkl"
 
-# Paramètres RAG & Chunking
-CHUNK_SIZE_TOKENS = 500
-CHUNK_OVERLAP_TOKENS = 100
+# Paramètres RAG & Chunking (toutes les tailles sont des tokens du tokenizer WordPiece de
+# DENSE_EMBEDDING_MODEL, pas des mots)
+EMBEDDING_MAX_TOKENS = 256     # max_seq_length de all-MiniLM-L6-v2 (marqueurs [CLS]/[SEP] compris)
+CHUNK_TARGET_TOKENS = 220      # taille cible du contenu d'un chunk
+CHUNK_OVERLAP_TOKENS = 40      # recouvrement entre deux chunks consécutifs (phrases entières)
+CHUNK_MIN_CONTENT_TOKENS = 32  # plancher du budget de contenu si le titre est très long
 TOP_K_SPARSE = 15
 TOP_K_DENSE = 15
 TOP_K_RERANKED = 4

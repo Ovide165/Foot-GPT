@@ -8,8 +8,8 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from pypdf import PdfReader
-from src.config import CHUNK_OVERLAP_TOKENS, CHUNK_SIZE_TOKENS
-from src.rag.chunker import TextChunk, split_text_by_tokens
+from src.config import CHUNK_OVERLAP_TOKENS
+from src.rag.chunker import TextChunk, content_token_budget, split_text_by_tokens
 
 
 class PDFParser:
@@ -58,8 +58,8 @@ class PDFParser:
 
             page_chunks = split_text_by_tokens(
                 cleaned_text,
-                chunk_size=CHUNK_SIZE_TOKENS,
-                chunk_overlap=CHUNK_OVERLAP_TOKENS,
+                max_tokens=content_token_budget(title),
+                overlap_tokens=CHUNK_OVERLAP_TOKENS,
             )
 
             for chunk_idx, chunk_text in enumerate(page_chunks, start=1):
