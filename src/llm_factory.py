@@ -79,13 +79,23 @@ class MockChatModel:
         return StructuredMockRunner(schema)
 
     def invoke(self, messages: Any) -> Any:
+        import re
         from langchain_core.messages import AIMessage
+        # Ne cite que les sources effectivement injectees dans le prompt du synthetiseur
+        citations = re.findall(r"Citation: (\[[^\n]*\])\n", str(messages).replace("\\n", "\n"))
+        if citations:
+            part2 = f"- Axial fixation and half-space overload to isolate the opponent's defensive line {citations[0]}.\n\n"
+        else:
+            part2 = (
+                "- No sufficiently relevant source in the knowledge base for this question; "
+                "the diagnosis above relies on match data only.\n\n"
+            )
         content = (
             "### Part 1: Tactical Diagnosis & Identified Vulnerabilities\n"
             "- Initial Asphyxiation (0-40 min): 0 shots attempted and 44 turnovers under pressure conceded by the low block.\n"
             "- Offensive Turning Point (70-85 min): +328% increase in forced turnovers and Mbappe double in 97 seconds.\n\n"
             "### Part 2: Tactical Principles & Theoretical Grounding\n"
-            "- Axial fixation and half-space overload to isolate the opponent's defensive line [Spielverlagerung, 2014 - The Half-Spaces].\n\n"
+            + part2 +
             "### Part 3: Prescriptions & Training Drills (UEFA Pro Standard)\n"
             "- Pitch Session (Rapid Build-up): Conservation 6v4 + 2 central jokers with 4-second forward release constraint."
         )

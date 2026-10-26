@@ -3,14 +3,41 @@ Nœud 4 : Critic Evaluator Node (Audit factuel anti-hallucination & vérificatio
 """
 
 import time
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 from langchain_core.messages import HumanMessage, SystemMessage
 from src.agent.prompts import CRITIC_SYSTEM_PROMPT
 from src.llm_factory import LLMFactory
+from src.rag.citations import find_invalid_citations
 from src.schemas.critic import AuditAnomaly, VerificationVerdict
 from src.schemas.miner import MatchFacts
 from src.schemas.state import TacticalAgentState
+
+
+def audit_citations(draft: str, retrieved_chunks: List[Dict[str, Any]]) -> List[AuditAnomaly]:
+    """Controle programmatique : toute citation du rapport doit etre celle d'un chunk fourni."""
+    allowed = [c.get("citation", "") for c in retrieved_chunks]
+    anomalies: List[AuditAnomaly] = []
+    for citation in find_invalid_citations(draft, allowed):
+        if allowed:
+            guidance = (
+                f"Citation {citation} does not match any excerpt provided to the synthesizer. "
+                f"Remove it or replace it with exactly one of: {'; '.join(a for a in allowed if a)}."
+            )
+        else:
+            guidance = (
+                f"Citation {citation} is not allowed: no source excerpt was provided. "
+                "Remove every citation and state that no sufficiently relevant source exists."
+            )
+        anomalies.append(
+            AuditAnomaly(
+                category="invalid_citation",
+                claim_in_text=citation,
+                truth_in_facts=None,
+                correction_guidance=guidance,
+            )
+        )
+    return anomalies
 
 
 def critic_node(state: TacticalAgentState) -> Dict[str, Any]:
@@ -37,6 +64,7 @@ def critic_node(state: TacticalAgentState) -> Dict[str, Any]:
             content=(
                 f"REPORT TO AUDIT:\n{draft}\n\n"
                 f"GROUND TRUTH MATCH_FACTS:\n{facts_summary}\n\n"
+                f"SOURCES_SUFFICIENT: {bool(retrieved_chunks)}\n\n"
                 f"AVAILABLE_CITATIONS & THEORETICAL EXCERPTS:\n{chunks_summary}"
             )
         ),
@@ -63,8 +91,21 @@ def critic_node(state: TacticalAgentState) -> Dict[str, Any]:
             verdict="FAIL",
         )
 
+    # Verification deterministe des citations, independante du jugement du LLM
+    citation_anomalies = audit_citations(draft, retrieved_chunks)
+    if citation_anomalies:
+        verdict = verdict.model_copy(
+            update={
+                "verdict": "FAIL",
+                "is_fully_cited": False,
+                "anomalies": citation_anomalies + list(verdict.anomalies),
+                "feedback_for_synthesizer": "\n".join(a.correction_guidance for a in citation_anomalies),
+            }
+        )
+
     t_latency = round((time.perf_counter() - t_start) * 1000, 1)
     telemetry = state.get("execution_telemetry") or {}
+    telemetry["critic_invalid_citations"] = len(citation_anomalies)
     telemetry["critic_latency_ms"] = t_latency
     telemetry["critic_faithfulness_score"] = verdict.faithfulness_score
 

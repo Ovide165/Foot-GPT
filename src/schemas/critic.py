@@ -8,7 +8,9 @@ from pydantic import BaseModel, Field, field_validator
 
 class AuditAnomaly(BaseModel):
     """Description précise d'une anomalie détectée lors de l'audit."""
-    category: Literal["numerical_hallucination", "missing_citation", "unsupported_claim", "formatting_error"]
+    category: Literal[
+        "numerical_hallucination", "missing_citation", "invalid_citation", "unsupported_claim", "formatting_error"
+    ]
     claim_in_text: str = Field(description="Phrase ou chiffre problématique relevé dans le texte")
     truth_in_facts: Optional[str] = Field(default=None, description="Valeur exacte issue de MatchFacts ou RetrievedChunks")
     correction_guidance: str = Field(description="Consigne de correction pour le synthétiseur")
