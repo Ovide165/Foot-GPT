@@ -19,6 +19,8 @@ class SemanticCacheEntry:
         match_facts_json: str,
         execution_telemetry: Dict[str, Any],
         time_range: Optional[Tuple[int, int]] = None,
+        scope: str = "window",
+        extras: Optional[Dict[str, Any]] = None,
     ):
         self.query = query
         self.match_id = match_id
@@ -27,6 +29,8 @@ class SemanticCacheEntry:
         self.match_facts_json = match_facts_json
         self.execution_telemetry = execution_telemetry
         self.time_range = time_range
+        self.scope = scope
+        self.extras = extras or {}
         self.created_at = time.time()
 
 
@@ -59,7 +63,13 @@ class SemanticCache:
         norm = np.linalg.norm(vec)
         return vec / norm if norm > 0 else vec
 
-    def get(self, query: str, match_id: int, time_range: Optional[Tuple[int, int]] = None) -> Optional[Dict[str, Any]]:
+    def get(
+        self,
+        query: str,
+        match_id: int,
+        time_range: Optional[Tuple[int, int]] = None,
+        scope: str = "window",
+    ) -> Optional[Dict[str, Any]]:
         """
         Cherche une entrée en cache sémantiquement équivalente pour le même match et la même tranche temporelle.
         """
@@ -75,6 +85,8 @@ class SemanticCache:
             if entry.match_id != match_id:
                 continue
             if time_range and entry.time_range != time_range:
+                continue
+            if entry.scope != scope:  # un rapport « match entier » n'est jamais servi pour une fenêtre
                 continue
             sim = float(np.dot(q_vec, entry.embedding))
             if sim > best_score:
@@ -92,6 +104,7 @@ class SemanticCache:
                 "match_facts_json": best_entry.match_facts_json,
                 "execution_telemetry": telemetry,
                 "cached_query": best_entry.query,
+                "extras": best_entry.extras,
             }
 
         return None
@@ -104,8 +117,14 @@ class SemanticCache:
         match_facts_json: str,
         execution_telemetry: Dict[str, Any],
         time_range: Optional[Tuple[int, int]] = None,
+        scope: str = "window",
+        extras: Optional[Dict[str, Any]] = None,
     ) -> None:
-        """Stocke une nouvelle réponse en cache avec son time_range."""
+        """
+        Stocke une nouvelle réponse en cache avec son time_range et sa portée (`window` ou `global`).
+        `extras` (JSON-compatible) restitue avec le rapport ce que l'interface affiche : chunks cités,
+        verdict du critique.
+        """
         q_vec = self._get_embedding(query)
         entry = SemanticCacheEntry(
             query=query,
@@ -115,6 +134,8 @@ class SemanticCache:
             match_facts_json=match_facts_json,
             execution_telemetry=execution_telemetry,
             time_range=time_range,
+            scope=scope,
+            extras=extras,
         )
         self.entries.append(entry)
 

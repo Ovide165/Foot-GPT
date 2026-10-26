@@ -7,9 +7,7 @@ from PIL import Image
 import streamlit as st
 
 import importlib
-import src.cache.semantic_cache
-importlib.reload(src.cache.semantic_cache)
-from src.agent.graph import run_tactical_analysis
+from src.app_service import analyze
 from src.cache.semantic_cache import GLOBAL_SEMANTIC_CACHE
 from src.data_mining.db_connection import ReadOnlyDBConnection
 from src.data_mining.match_miner import MatchMiner
@@ -390,85 +388,41 @@ with tab_coach:
             active_phase_obj = phase_clicked
             active_range = phase_clicked["range"]
 
-            # Load from semantic cache if available, else run analysis directly
+            # Cache (PASS uniquement) ou exécution du graphe
             active_query = phase_clicked["query"]
-            cached_resp = GLOBAL_SEMANTIC_CACHE.get(active_query, match_id, time_range=phase_clicked['range'])
-            if cached_resp:
-                st.session_state.current_result = {
-                    "final_report": cached_resp["final_report"],
-                    "execution_telemetry": cached_resp["execution_telemetry"],
-                    "match_facts": None,
-                    "retrieved_chunks": [],
-                }
-            else:
-                with st.spinner(f"Analyzing sequence: {phase_clicked['name']}..."):
-                    try:
-                        import time
-                        res = run_tactical_analysis(
-                            coach_query=active_query,
-                            match_id=match_id,
-                            thread_id=f"session_{match_id}_{time.time()}",
-                            user_time_range=phase_clicked["range"],
-                        )
-                        st.session_state.current_result = res
-                        if res.get("final_report"):
-                            GLOBAL_SEMANTIC_CACHE.set(
-                                query=active_query,
-                                match_id=match_id,
-                                final_report=res["final_report"],
-                                match_facts_json="{}",
-                                execution_telemetry=res.get("execution_telemetry", {}),
-                                time_range=phase_clicked['range'],
-                            )
-                    except Exception as e:
-                        err_msg = str(e)
-                        if "Rate limit" in err_msg or "429" in err_msg:
-                            st.warning("Instant Groq TPM rate limit reached. Please wait 15-20 seconds.")
-                        else:
-                            st.error(f"Analysis error: {err_msg}")
+            with st.spinner(f"Analyzing sequence: {phase_clicked['name']}..."):
+                try:
+                    st.session_state.current_result = analyze(
+                        active_query, match_id, phase_clicked["range"],
+                        is_global_view=phase_clicked["id"] == "global",
+                    )
+                except Exception as e:
+                    err_msg = str(e)
+                    if "Rate limit" in err_msg or "429" in err_msg:
+                        st.warning("Instant Groq TPM rate limit reached. Please wait 15-20 seconds.")
+                    else:
+                        st.error(f"Analysis error: {err_msg}")
             st.rerun()
 
         # Automatic generation if no report in memory
         if st.session_state.current_result is None or not st.session_state.current_result.get("final_report"):
             init_phase = active_phase_obj
-            init_query = init_phase["query"]
-            cached_resp = GLOBAL_SEMANTIC_CACHE.get(init_query, match_id, time_range=init_phase['range'])
-            if cached_resp:
-                st.session_state.current_result = {
-                    "final_report": cached_resp["final_report"],
-                    "execution_telemetry": cached_resp["execution_telemetry"],
-                    "match_facts": None,
-                    "retrieved_chunks": [],
-                }
-            else:
-                res = None
-                with st.spinner(f"Generating tactical report: {init_phase['name']}..."):
-                    try:
-                        import time
-                        res = run_tactical_analysis(
-                            coach_query=init_query,
-                            match_id=match_id,
-                            thread_id=f"session_{match_id}_{time.time()}",
-                            user_time_range=init_phase["range"],
-                        )
-                        st.session_state.current_result = res
-                        if res.get("final_report"):
-                            GLOBAL_SEMANTIC_CACHE.set(
-                                query=init_query,
-                                match_id=match_id,
-                                final_report=res["final_report"],
-                                match_facts_json="{}",
-                                execution_telemetry=res.get("execution_telemetry", {}),
-                                time_range=init_phase['range'],
-                            )
-                    except Exception as e:
-                        err_msg = str(e)
-                        if "Rate limit" in err_msg or "429" in err_msg:
-                            st.warning("Instant Groq TPM rate limit reached. Please wait 15-20 seconds.")
-                        else:
-                            st.error(f"Analysis error: {err_msg}")
-                if res and res.get("final_report"):
-                    st.rerun()
+            res = None
+            with st.spinner(f"Generating tactical report: {init_phase['name']}..."):
+                try:
+                    res = analyze(
+                        init_phase["query"], match_id, init_phase["range"],
+                        is_global_view=init_phase["id"] == "global",
+                    )
+                    st.session_state.current_result = res
+                except Exception as e:
+                    err_msg = str(e)
+                    if "Rate limit" in err_msg or "429" in err_msg:
+                        st.warning("Instant Groq TPM rate limit reached. Please wait 15-20 seconds.")
+                    else:
+                        st.error(f"Analysis error: {err_msg}")
+            if res and res.get("final_report"):
+                st.rerun()
 
         st.markdown("<div style='height: 4px;'></div>", unsafe_allow_html=True)
 
@@ -500,43 +454,22 @@ with tab_coach:
                 if not is_safe:
                     st.error(f"Query rejected: {msg}")
                 else:
-                    cached_resp = GLOBAL_SEMANTIC_CACHE.get(query_to_run, match_id, time_range=active_range)
-                    if cached_resp:
-                        st.session_state.current_result = {
-                            "final_report": cached_resp["final_report"],
-                            "execution_telemetry": cached_resp["execution_telemetry"],
-                            "match_facts": None,
-                            "retrieved_chunks": [],
-                        }
+                    result_state = None
+                    with st.spinner(f"Running tactical analysis for {active_phase_obj['btn_label']}..."):
+                        try:
+                            result_state = analyze(
+                                query_to_run, match_id, active_range,
+                                is_global_view=active_phase_obj["id"] == "global",
+                            )
+                            st.session_state.current_result = result_state
+                        except Exception as e:
+                            err_msg = str(e)
+                            if "Rate limit" in err_msg or "429" in err_msg:
+                                st.warning("Instant Groq TPM rate limit reached. Please wait 15-20 seconds.")
+                            else:
+                                st.error(f"Analysis error: {err_msg}")
+                    if result_state and result_state.get("final_report"):
                         st.rerun()
-                    else:
-                        result_state = None
-                        with st.spinner(f"Running tactical analysis for {active_phase_obj['btn_label']}..."):
-                            try:
-                                result_state = run_tactical_analysis(
-                                    coach_query=query_to_run,
-                                    match_id=match_id,
-                                    thread_id=f"session_{match_id}_{time.time()}",
-                                    user_time_range=active_range,
-                                )
-                                st.session_state.current_result = result_state
-                                if result_state.get("final_report"):
-                                    GLOBAL_SEMANTIC_CACHE.set(
-                                        query=query_to_run,
-                                        match_id=match_id,
-                                        final_report=result_state["final_report"],
-                                        match_facts_json="{}",
-                                        execution_telemetry=result_state.get("execution_telemetry", {}),
-                                        time_range=active_range,
-                                    )
-                            except Exception as e:
-                                err_msg = str(e)
-                                if "Rate limit" in err_msg or "429" in err_msg:
-                                    st.warning("Instant Groq TPM rate limit reached. Please wait 15-20 seconds.")
-                                else:
-                                    st.error(f"Analysis error: {err_msg}")
-                        if result_state and result_state.get("final_report"):
-                            st.rerun()
 
         st.markdown("<div style='height: 4px;'></div>", unsafe_allow_html=True)
 
@@ -614,23 +547,10 @@ with tab_coach:
                 )
                 if st.button(f"Generate Tactical Report ({active_phase_obj['btn_label']})", type="primary", use_container_width=True, key=f"btn_gen_fallback_{match_id}"):
                     with st.spinner(f"Generating tactical report: {active_phase_obj['name']}..."):
-                        import time
-                        res = run_tactical_analysis(
-                            coach_query=active_phase_obj["query"],
-                            match_id=match_id,
-                            thread_id=f"session_{match_id}_{time.time()}",
-                            user_time_range=active_phase_obj["range"],
+                        st.session_state.current_result = analyze(
+                            active_phase_obj["query"], match_id, active_phase_obj["range"],
+                            is_global_view=active_phase_obj["id"] == "global",
                         )
-                        st.session_state.current_result = res
-                        if res.get("final_report"):
-                            GLOBAL_SEMANTIC_CACHE.set(
-                                query=active_phase_obj["query"],
-                                match_id=match_id,
-                                final_report=res["final_report"],
-                                match_facts_json="{}",
-                                execution_telemetry=res.get("execution_telemetry", {}),
-                                time_range=active_phase_obj["range"],
-                            )
                         st.rerun()
 
 # ==============================================================================
