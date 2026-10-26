@@ -1,0 +1,280 @@
+[
+  {
+    "id": "p01",
+    "type": "in_corpus",
+    "question": "Why did France struggle to progress the ball in the first 40 minutes?",
+    "theoretical_topics": [
+      "Counterpressing",
+      "Passing Networks"
+    ],
+    "spatial_zones": [
+      "zone_14"
+    ],
+    "delta_keys": [
+      "Argentina_turnovers_0_40",
+      "France_turnovers_0_40"
+    ]
+  },
+  {
+    "id": "p02",
+    "type": "in_corpus",
+    "question": "How did Argentina exploit the half-spaces on the left side?",
+    "theoretical_topics": [
+      "Half-Spaces"
+    ],
+    "spatial_zones": [
+      "left_half_space"
+    ],
+    "delta_keys": [
+      "Argentina_turnovers_0_40",
+      "Argentina_turnovers_40_70",
+      "Argentina_turnovers_70_85",
+      "Argentina_turnovers_85_90",
+      "Argentina_turnovers_90_120"
+    ]
+  },
+  {
+    "id": "p03",
+    "type": "in_corpus",
+    "question": "Analyse the full match flow and the key tactical turning points.",
+    "theoretical_topics": [
+      "Rest-Defense",
+      "Counterpressing",
+      "Compactness"
+    ],
+    "spatial_zones": [],
+    "delta_keys": [
+      "Argentina_turnovers_0_40",
+      "Argentina_turnovers_40_70",
+      "Argentina_turnovers_70_85",
+      "Argentina_turnovers_85_90",
+      "Argentina_turnovers_90_120"
+    ]
+  },
+  {
+    "id": "p04",
+    "type": "in_corpus",
+    "question": "Why did France recover control between minute 70 and 85?",
+    "theoretical_topics": [
+      "Counterpressing",
+      "Vertical Build-up Passing"
+    ],
+    "spatial_zones": [
+      "right_wing"
+    ],
+    "delta_keys": [
+      "France_turnovers_70_85"
+    ]
+  },
+  {
+    "id": "p05",
+    "type": "in_corpus",
+    "question": "How effective was the French rest-defense after losing the ball in the opponent's half?",
+    "theoretical_topics": [
+      "Rest-Defense"
+    ],
+    "spatial_zones": [
+      "central_corridor"
+    ],
+    "delta_keys": [
+      "Argentina_turnovers_40_70",
+      "France_turnovers_40_70"
+    ]
+  },
+  {
+    "id": "p06",
+    "type": "in_corpus",
+    "question": "Assess Argentina's compactness and zonal marking after the substitutions.",
+    "theoretical_topics": [
+      "Compactness",
+      "Zonal Marking"
+    ],
+    "spatial_zones": [],
+    "delta_keys": [
+      "Argentina_turnovers_85_120",
+      "France_turnovers_85_120"
+    ]
+  },
+  {
+    "id": "p07",
+    "type": "in_corpus",
+    "question": "Which players were isolated by the passing network structure of France?",
+    "theoretical_topics": [
+      "Passing Networks"
+    ],
+    "spatial_zones": [],
+    "delta_keys": [
+      "Argentina_turnovers_0_40",
+      "France_turnovers_0_40"
+    ]
+  },
+  {
+    "id": "p08",
+    "type": "in_corpus",
+    "question": "How did Messi's positioning between the lines create dismarking opportunities?",
+    "theoretical_topics": [
+      "Dismarking",
+      "Juego de Posicion"
+    ],
+    "spatial_zones": [
+      "zone_14"
+    ],
+    "delta_keys": [
+      "Argentina_turnovers_0_40",
+      "France_turnovers_0_40"
+    ]
+  },
+  {
+    "id": "p09",
+    "type": "in_corpus",
+    "question": "Explain how France's vertical build-up changed after the double substitution.",
+    "theoretical_topics": [
+      "Vertical Build-up Passing"
+    ],
+    "spatial_zones": [],
+    "delta_keys": [
+      "Argentina_turnovers_40_70",
+      "France_turnovers_40_70"
+    ]
+  },
+  {
+    "id": "p10",
+    "type": "in_corpus",
+    "question": "What does the blind side of the Argentine midfield tell us about Mbappe's runs?",
+    "theoretical_topics": [
+      "Blind Side Potential"
+    ],
+    "spatial_zones": [
+      "right_half_space"
+    ],
+    "delta_keys": [
+      "France_turnovers_70_85"
+    ]
+  },
+  {
+    "id": "p11",
+    "type": "in_corpus",
+    "question": "How valuable were line-breaking passes in the final third for Argentina?",
+    "theoretical_topics": [
+      "Line-breaking passes"
+    ],
+    "spatial_zones": [
+      "final_third"
+    ],
+    "delta_keys": [
+      "Argentina_turnovers_85_120",
+      "France_turnovers_85_120"
+    ]
+  },
+  {
+    "id": "p12",
+    "type": "in_corpus",
+    "question": "Describe the tactical impact of the high press in the opening phase.",
+    "theoretical_topics": [
+      "Counterpressing",
+      "Gegenpressing"
+    ],
+    "spatial_zones": [],
+    "delta_keys": [
+      "Argentina_turnovers_0_40",
+      "France_turnovers_0_40"
+    ]
+  },
+  {
+    "id": "u01",
+    "type": "football_uncovered",
+    "question": "How should a goalkeeper position himself during a penalty shootout?",
+    "theoretical_topics": [
+      "Goalkeeping"
+    ],
+    "spatial_zones": [
+      "penalty_area"
+    ],
+    "delta_keys": [
+      "Argentina_turnovers_0_40",
+      "Argentina_turnovers_40_70",
+      "Argentina_turnovers_70_85",
+      "Argentina_turnovers_85_90",
+      "Argentina_turnovers_90_120"
+    ]
+  },
+  {
+    "id": "u02",
+    "type": "football_uncovered",
+    "question": "What are the best corner kick routines to score from set pieces?",
+    "theoretical_topics": [
+      "Set Pieces"
+    ],
+    "spatial_zones": [
+      "six_yard_box"
+    ],
+    "delta_keys": [
+      "Argentina_turnovers_85_120",
+      "France_turnovers_85_120"
+    ]
+  },
+  {
+    "id": "x01",
+    "type": "off_topic",
+    "question": "What is the correct scrum engagement technique for rugby props?",
+    "theoretical_topics": [],
+    "spatial_zones": [],
+    "delta_keys": [
+      "Argentina_turnovers_0_40",
+      "France_turnovers_0_40"
+    ]
+  },
+  {
+    "id": "x02",
+    "type": "off_topic",
+    "question": "How many grams of protein should a marathon runner eat before a race?",
+    "theoretical_topics": [],
+    "spatial_zones": [],
+    "delta_keys": [
+      "Argentina_turnovers_0_40",
+      "Argentina_turnovers_40_70",
+      "Argentina_turnovers_70_85",
+      "Argentina_turnovers_85_90",
+      "Argentina_turnovers_90_120"
+    ]
+  },
+  {
+    "id": "x03",
+    "type": "off_topic",
+    "question": "Which carbohydrates are best for a marathon runner the day before the race?",
+    "theoretical_topics": [
+      "Rest-Defense",
+      "Half-Spaces",
+      "Passing Networks"
+    ],
+    "spatial_zones": [
+      "left_half_space",
+      "zone_14"
+    ],
+    "delta_keys": [
+      "Argentina_turnovers_0_40",
+      "Argentina_turnovers_40_70",
+      "Argentina_turnovers_70_85",
+      "Argentina_turnovers_85_90",
+      "Argentina_turnovers_90_120"
+    ]
+  },
+  {
+    "id": "x04",
+    "type": "off_topic",
+    "question": "How does the video referee review process work in cricket tournaments?",
+    "theoretical_topics": [
+      "Rest-Defense",
+      "Half-Spaces",
+      "Passing Networks"
+    ],
+    "spatial_zones": [
+      "left_half_space",
+      "zone_14"
+    ],
+    "delta_keys": [
+      "Argentina_turnovers_0_40",
+      "France_turnovers_0_40"
+    ]
+  }
+]

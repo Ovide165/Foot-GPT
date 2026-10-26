@@ -33,26 +33,20 @@ def get_hybrid_retriever() -> HybridRetriever:
     return _GLOBAL_HYBRID_RETRIEVER
 
 
-def deep_rag_node(state: TacticalAgentState) -> Dict[str, Any]:
+def build_enriched_query(coach_query: str, plan: Any, match_facts: Any) -> str:
     """
-    Exécute la recherche documentaire hybride en exploitant à la fois
-    le TacticalPlan ET les anomalies statistiques réelles révélées par MatchFacts.
+    Requête envoyée à BM25, au dense et au reranker : question du coach, thèmes théoriques et zones
+    du plan, puis les 2 premières clés de `significant_deltas` (sans bruit chiffré).
     """
-    t_start = time.perf_counter()
-    plan: TacticalPlan = state.get("tactical_plan")  # type: ignore
-    match_facts: MatchFacts = state.get("match_facts")  # type: ignore
-    coach_query = state.get("coach_query", "")
-
-    # 1. Construction de la requête RAG enrichie par la data (Data-Informed)
     query_parts: List[str] = []
-    
+
     # Toujours inclure l'intention fondamentale de l'entraîneur
     if coach_query and coach_query.strip():
         query_parts.append(coach_query.strip())
 
     if plan and plan.theoretical_topics:
         query_parts.extend(plan.theoretical_topics)
-    
+
     if plan and plan.spatial_zones:
         # Nettoyage des zones pour la recherche documentaire
         query_parts.extend([z.replace("_", " ") for z in plan.spatial_zones])
@@ -67,7 +61,21 @@ def deep_rag_node(state: TacticalAgentState) -> Dict[str, Any]:
     if not query_parts:
         query_parts.append("Rest-Defense Half-Spaces Counterpressing tactical balance")
 
-    enriched_query = " ".join(query_parts)
+    return " ".join(query_parts)
+
+
+def deep_rag_node(state: TacticalAgentState) -> Dict[str, Any]:
+    """
+    Exécute la recherche documentaire hybride en exploitant à la fois
+    le TacticalPlan ET les anomalies statistiques réelles révélées par MatchFacts.
+    """
+    t_start = time.perf_counter()
+    plan: TacticalPlan = state.get("tactical_plan")  # type: ignore
+    match_facts: MatchFacts = state.get("match_facts")  # type: ignore
+    coach_query = state.get("coach_query", "")
+
+    # 1. Construction de la requête RAG enrichie par la data (Data-Informed)
+    enriched_query = build_enriched_query(coach_query, plan, match_facts)
 
     # 2. Exécution du Retrieval Hybride (BM25 + Vector + RRF + Cross-Encoder)
     retriever = get_hybrid_retriever()

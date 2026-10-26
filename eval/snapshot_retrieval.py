@@ -6,6 +6,10 @@ tous les candidats fusionnes (top 4 marques), ainsi que les statistiques de chun
 (tokens vus par l'embedding). Les resultats servent a calibrer RERANK_MIN_SCORE.
 
 Usage : python eval/snapshot_retrieval.py eval/results_before.json
+        python eval/snapshot_retrieval.py eval/results_pipeline.json --pipeline-queries
+
+Avec --pipeline-queries, les requetes de eval/pipeline_queries.json sont construites comme le fait
+le noeud RAG (question + topics + zones + 2 premieres cles de deltas) via build_enriched_query.
 """
 
 import json
@@ -24,6 +28,7 @@ from src.rag.reranker import CrossEncoderReranker
 from src.rag.vector_store import VectorStoreManager
 
 QUERIES_PATH = Path(__file__).resolve().parent / "baseline_queries.json"
+PIPELINE_QUERIES_PATH = Path(__file__).resolve().parent / "pipeline_queries.json"
 EMBEDDING_MAX_TOKENS = 256
 
 
@@ -53,8 +58,24 @@ def brief(chunk, score=None) -> Dict[str, Any]:
     return d
 
 
-def main(out_path: str) -> None:
-    queries = json.loads(QUERIES_PATH.read_text(encoding="utf-8"))
+def load_queries(pipeline_shaped: bool) -> List[Dict[str, Any]]:
+    if not pipeline_shaped:
+        return json.loads(QUERIES_PATH.read_text(encoding="utf-8"))
+    from types import SimpleNamespace
+
+    from src.agent.nodes.deep_rag_node import build_enriched_query
+
+    queries = []
+    for item in json.loads(PIPELINE_QUERIES_PATH.read_text(encoding="utf-8")):
+        plan = SimpleNamespace(theoretical_topics=item["theoretical_topics"], spatial_zones=item["spatial_zones"])
+        facts = SimpleNamespace(significant_deltas={k: "" for k in item["delta_keys"]})
+        queries.append({"id": item["id"], "type": item["type"],
+                        "query": build_enriched_query(item["question"], plan, facts)})
+    return queries
+
+
+def main(out_path: str, pipeline_shaped: bool = False) -> None:
+    queries = load_queries(pipeline_shaped)
     bm25 = BM25Retriever()
     assert bm25.load(), "Index BM25 introuvable : lancer index_knowledge_base.py"
     vs = VectorStoreManager()
@@ -106,4 +127,5 @@ def main(out_path: str) -> None:
 
 
 if __name__ == "__main__":
-    main(sys.argv[1] if len(sys.argv) > 1 else "eval/results_after.json")
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    main(args[0] if args else "eval/results_after.json", "--pipeline-queries" in sys.argv)
