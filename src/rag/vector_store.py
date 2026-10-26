@@ -9,7 +9,7 @@ from typing import Any, Dict, List, Optional, Tuple
 import chromadb
 from chromadb.config import Settings
 from src.config import CHROMA_PERSIST_DIR, DENSE_EMBEDDING_MODEL
-from src.rag.chunker import TextChunk
+from src.rag.chunker import TextChunk, chunk_embedding_text
 
 
 _CHROMA_CLIENTS: Dict[str, chromadb.ClientAPI] = {}
@@ -53,11 +53,20 @@ class VectorStoreManager:
             self.embedding_fn = embedding_functions.DefaultEmbeddingFunction()
 
     def add_chunks(self, chunks: List[TextChunk], batch_size: int = 100) -> None:
-        """Ajoute des chunks par lots dans la collection ChromaDB."""
+        """
+        Ajoute des chunks par lots dans la collection ChromaDB.
+
+        Le vecteur est calculé sur `chunk_embedding_text` (titre + section + contenu), comme le
+        font BM25 et le reranker, mais le document stocké reste le contenu seul.
+        """
         for i in range(0, len(chunks), batch_size):
             batch = chunks[i : i + batch_size]
             ids = [c.chunk_id for c in batch]
             documents = [c.content for c in batch]
+            embeddings = [
+                [float(x) for x in vector]
+                for vector in self.embedding_fn([chunk_embedding_text(c) for c in batch])
+            ]
             metadatas = [
                 {
                     "source_type": c.source_type,
@@ -71,7 +80,16 @@ class VectorStoreManager:
                 }
                 for c in batch
             ]
-            self.collection.upsert(ids=ids, documents=documents, metadatas=metadatas)
+            self.collection.upsert(ids=ids, documents=documents, embeddings=embeddings, metadatas=metadatas)
+
+    def reset(self) -> None:
+        """Vide la collection (ré-indexation complète : évite de garder des chunks périmés)."""
+        self.client.delete_collection(self.COLLECTION_NAME)
+        self.collection = self.client.get_or_create_collection(
+            name=self.COLLECTION_NAME,
+            embedding_function=self.embedding_fn,
+            metadata={"hnsw:space": "cosine"},
+        )
 
     def retrieve(self, query: str, top_k: int = 15) -> List[Tuple[TextChunk, float]]:
         """Recherche par similarité vectorielle cosinus."""
