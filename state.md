@@ -48,7 +48,7 @@ Coach Query / Focus Window
 ### Flow Logic & Pipeline Capabilities:
 1. **Node 1 (Router):** Extracts temporal ranges, spatial zones, target players (*Messi*, *Mbappé*, *Di María*, etc.), and tactical topics using `openai/gpt-oss-20b` (with fallback to `openai/gpt-oss-120b`).
 2. **Node 2A (SQL Miner):** Deterministically queries SQLite (`mode=ro`) to extract event streams, compute xG sums, pressure turnovers, and relative team baselines.
-3. **Node 2B (Deep RAG):** Queries the dense ChromaDB (305 tactical chunks) + BM25 sparse index via Reciprocal Rank Fusion (RRF), re-ranked with `ms-marco-MiniLM-L-6-v2`.
+3. **Node 2B (Deep RAG):** Queries the dense ChromaDB (977 tactical chunks) + BM25 sparse index via Reciprocal Rank Fusion (RRF), re-ranked with `ms-marco-MiniLM-L-6-v2`.
 4. **Node 3 (Synthesizer):** Employs `qwen/qwen3.8-27b` on Groq (~1.8s ultra-low latency) to generate dense, multi-phase tactical reports formatted into 3 indissociable sections:
    - **Part 1 : Factual Diagnosis & Identified Vulnerabilities**
    - **Part 2 : Tactical Principles & Theoretical Foundations**
@@ -147,7 +147,7 @@ Foot-GPT/
 │
 └── data/                                # Local persistence datasets
     ├── statsbomb_foot.db                # SQLite StatsBomb database (64 matches)
-    ├── chroma_db/                       # ChromaDB persistent vector database (305 chunks)
+    ├── chroma_db/                       # ChromaDB persistent vector database (977 chunks)
     ├── bm25_index.pkl                   # Sparse index serialization file
     ├── high_level_guides/               # Curated tactical theory guides
     └── raw_markdown/                    # Spielverlagerung tactical articles

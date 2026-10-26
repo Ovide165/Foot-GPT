@@ -50,7 +50,7 @@ flowchart TD
 
 ---
 
-## 2. Le Corpus Documentaire Hétérogène (305 Chunks)
+## 2. Le Corpus Documentaire Hétérogène (977 Chunks)
 
 Le corpus indexé (`index_knowledge_base.py`) rassemble 3 catégories de sources documentaires expertes :
 
