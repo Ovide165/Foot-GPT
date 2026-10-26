@@ -10,6 +10,7 @@ import importlib
 from src.app_service import analyze, verdict_view
 from src.cache.semantic_cache import GLOBAL_SEMANTIC_CACHE
 from src.data_mining.db_connection import ReadOnlyDBConnection
+from src.llm_factory import DEMO_MODE_BANNER, LLMFactory
 from src.data_mining.match_miner import MatchMiner
 from src.data_mining.phase_generator import MatchPhaseGenerator
 from src.security.guardrails import SecurityGuardrails
@@ -180,6 +181,9 @@ with col_clear:
         st.session_state.selected_match_id = None
         st.toast("Application cache purged!")
         st.rerun()
+
+if LLMFactory.is_demo_mode():
+    st.error(DEMO_MODE_BANNER)
 
 tab_coach, tab_admin = st.tabs(["Tactical Analysis", "Supervision & Benchmark"])
 
