@@ -1,6 +1,7 @@
 """
 Module de Cache Sémantique Vectoriel (Phase 6.2).
-Fournit des réponses quasi instantanées (< 10 ms) et à coût zéro sur requêtes similaires.
+Fournit des réponses quasi instantanées (quelques ms une fois le modèle d'embedding chargé) et à coût zéro
+sur requêtes similaires. La latence d'un hit est mesurée, pas supposée.
 """
 
 import time
@@ -62,6 +63,7 @@ class SemanticCache:
         """
         Cherche une entrée en cache sémantiquement équivalente pour le même match et la même tranche temporelle.
         """
+        t_start = time.perf_counter()
         if not self.entries:
             return None
 
@@ -83,7 +85,8 @@ class SemanticCache:
             telemetry = dict(best_entry.execution_telemetry)
             telemetry["is_semantic_cache_hit"] = True
             telemetry["cache_similarity_score"] = round(best_score, 4)
-            telemetry["total_pipeline_latency_ms"] = 8.5  # < 10 ms
+            # Latence reellement mesuree de ce get() (embedding de la requete + comparaison)
+            telemetry["total_pipeline_latency_ms"] = round((time.perf_counter() - t_start) * 1000, 2)
             return {
                 "final_report": best_entry.final_report,
                 "match_facts_json": best_entry.match_facts_json,

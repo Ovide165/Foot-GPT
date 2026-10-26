@@ -6,7 +6,8 @@ import re
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from src.rag.chunker import TextChunk, split_text_by_tokens
+from src.config import CHUNK_OVERLAP_TOKENS
+from src.rag.chunker import TextChunk, content_token_budget, split_text_by_tokens
 
 
 class MarkdownParser:
@@ -28,7 +29,7 @@ class MarkdownParser:
         meta, body_text = self._extract_yaml_frontmatter(text)
         title = meta.get("title", doc_id.replace("_", " ").title())
         source_url = meta.get("source_url", f"file://{md_path.resolve()}")
-        year = meta.get("year")
+        year = int(meta["year"]) if str(meta.get("year", "")).isdigit() else None
         if not year and "20" in source_url:
             year_match = re.search(r"/20(\d{2})/", source_url)
             if year_match:
@@ -45,13 +46,17 @@ class MarkdownParser:
             if not content.strip() or len(content.split()) < 15:
                 continue
 
-            sub_chunks = split_text_by_tokens(content, chunk_size=600, chunk_overlap=100)
+            sub_chunks = split_text_by_tokens(
+                content,
+                max_tokens=content_token_budget(title, header or None),
+                overlap_tokens=CHUNK_OVERLAP_TOKENS,
+            )
             for sub in sub_chunks:
                 chunk_id = f"{doc_id}_c{chunk_counter}"
                 chunks.append(
                     TextChunk(
                         chunk_id=chunk_id,
-                        content=f"### {header}\n\n{sub}" if header else sub,
+                        content=sub,  # la section est portée par `section` et ajoutée au texte embeddé
                         source_type=source_type,  # type: ignore
                         title=title,
                         authors="Spielverlagerung Editorial Staff" if source_type == "tactical_article" else "foot-GPT Technical Staff",

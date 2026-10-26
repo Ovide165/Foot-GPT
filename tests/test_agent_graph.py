@@ -16,7 +16,7 @@ def test_tactical_graph_compilation():
 
 def test_run_tactical_analysis_end_to_end():
     """Vérifie l'exécution complète du pipeline agentique séquentiel."""
-    query = "Explique l'asphyxie tactique subie par la France lors des 40 premières minutes."
+    query = "Explain the tactical asphyxiation suffered by France during the first 40 minutes."
     match_id = 3869685
     thread_id = "test_e2e_session"
 
@@ -36,9 +36,11 @@ def test_run_tactical_analysis_end_to_end():
     assert len(result["match_facts"].phases_data) > 0
 
     # 3. Validation de la sortie du Nœud 2B (Data-Informed RAG)
+    # Le retrieval est filtre par RERANK_MIN_SCORE : on verifie le cablage (indicateur coherent
+    # avec les chunks) et non un nombre de chunks, qui depend du score du cross-encoder.
     assert result["retrieved_chunks"] is not None
-    assert len(result["retrieved_chunks"]) > 0
-    assert "citation" in result["retrieved_chunks"][0]
+    assert result["sources_sufficient"] == (len(result["retrieved_chunks"]) > 0)
+    assert all("citation" in c for c in result["retrieved_chunks"])
 
     # 4. Validation de la sortie du Nœud 3 (Synthesizer) & 4 (Critic)
     assert result["draft_report"] is not None

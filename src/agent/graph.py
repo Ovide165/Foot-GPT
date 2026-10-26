@@ -90,6 +90,7 @@ def run_tactical_analysis(
         "tactical_plan": None,
         "match_facts": None,
         "retrieved_chunks": None,
+        "sources_sufficient": None,
         "draft_report": None,
         "critic_verdict": None,
         "critic_feedback": None,

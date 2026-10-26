@@ -87,6 +87,7 @@ def main() -> None:
     # 3. Construction de la base vectorielle ChromaDB
     print("\n[INDEXING] Construction de la base vectorielle Dense ChromaDB...")
     vector_store = VectorStoreManager(persist_dir=CHROMA_PERSIST_DIR)
+    vector_store.reset()  # repart d'une collection vide : aucun chunk d'une ancienne indexation
     vector_store.add_chunks(chunks)
     print(f"[SUCCESS] {vector_store.count()} documents indexés dans ChromaDB -> {CHROMA_PERSIST_DIR}")
 
