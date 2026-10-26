@@ -6,11 +6,11 @@
 
 ## 1. Arbitrage d'Architecture : Précision vs Latence (*Engineering Trade-off*)
 
-Une exécution complète du graphe prend de 3.5s à 8.0s et consomme de 3 500 à 6 500 tokens. Ce coût est un **choix d'architecture assumé** : dans le football professionnel, une hallucination statistique est rédhibitoire pour un staff technique. foot-GPT privilégie donc la précision factuelle (score Faithfulness 0.95 - 1.00 via un audit Critic LLM-as-a-Judge) plutôt que la rapidité brute d'un appel unique.
+Une exécution complète du graphe prend de 3.5s à 8.0s et consomme de 3 500 à 6 500 tokens. Ce coût est un **choix d'architecture assumé** : dans le football professionnel, une hallucination statistique est rédhibitoire pour un staff technique. foot-GPT privilégie donc la précision factuelle (audit des chiffres cités par un Critic LLM-as-a-Judge) plutôt que la rapidité brute d'un appel unique.
 
 ### ROI Métier :
 - **Sans foot-GPT :** 15 à 25 heures par semaine d'extraction SQL/Python manuelle et de rédaction.
-- **Avec foot-GPT :** 4 à 5 secondes de traitement automatisé certifié à 100% sans hallucination.
+- **Avec foot-GPT :** 4 à 5 secondes de traitement automatisé, avec audit factuel des chiffres cités par le Critic.
 
 ---
 
@@ -70,7 +70,7 @@ flowchart TD
     v1 --> OPT2["2. Spécialisation par SLMs (Fine-Tuned 3B)\nQwen-2.5-3B sur Router & Critic\n(Tokens /5 | Latence /3)"]
     v1 --> OPT3["3. Prompt Compression & Speculative Decoding\nCompression sémantique des chunks RAG\n(-50% Fenêtre de contexte)"]
     
-    OPT1 & OPT2 & OPT3 --> v2["foot-GPT v2 (Target Production)\nLatence: < 1.2s | Tokens: < 1.2k\nCertifié 100% Faithfulness"]
+    OPT1 & OPT2 & OPT3 --> v2["foot-GPT v2 (Target Production)\nLatence: < 1.2s | Tokens: < 1.2k\nAudit factuel du Critic conservé"]
 ```
 
 ### 4.1 Axe 1 : Parallélisation Asynchrone (LangGraph Async)

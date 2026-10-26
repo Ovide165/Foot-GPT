@@ -94,4 +94,3 @@ Le prompt système impose une règle formelle d'ancrage :
 | **Précision des Statistiques** | Hallucination totale : invente *562 passes* | Exactitude mathématique : **420 passes** (SQL Ground Truth) |
 | **Traçabilité des Sources** | Généralités sans source ni auteur | Citations formelles : `[Spielverlagerung, 2014]`, `[Bauer et al., 2026]` |
 | **Couverture Lexicale Pointue** | Ignore les concepts comme *Halbraum* | Capture exacte via le double retrieval BM25 + ChromaDB |
-| **Score Faithfulness** | `0.00` | **`0.95 - 1.00`** |
