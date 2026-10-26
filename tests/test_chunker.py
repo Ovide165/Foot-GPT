@@ -111,3 +111,23 @@ def test_real_corpus_markdown_chunks_fit_the_embedding_window():
             assert count_tokens(chunk_embedding_text(chunk)) + 2 <= EMBEDDING_MAX_TOKENS, chunk.chunk_id
             n += 1
     assert n > 0
+
+
+def test_every_corpus_markdown_citation_is_recognised_by_the_citation_check(tmp_path):
+    """Guides inclus : chaque citation produite doit avoir le format [Auteur, Annee - Titre]."""
+    from src.rag.citations import extract_citations
+
+    parser = MarkdownParser()
+    files = sorted(Path(HIGH_LEVEL_DIR).glob("*.md")) + sorted(Path(RAW_MARKDOWN_DIR).glob("*.md"))
+    for f in files:
+        for chunk in parser.parse_markdown_file(f):
+            citation = chunk.format_citation()
+            assert extract_citations(citation) == [citation], f"{f.name}: {citation}"
+
+
+def test_markdown_year_comes_from_frontmatter(tmp_path):
+    md = tmp_path / "guide.md"
+    md.write_text('---\ntitle: "Mon guide"\nyear: 2026\n---\n\n## Section\n\n' + "Une phrase utile sur le pressing. " * 20, encoding="utf-8")
+    chunks = MarkdownParser().parse_markdown_file(md, source_type="high_level_guide")
+    assert chunks and all(c.year == 2026 for c in chunks)
+    assert chunks[0].format_citation() == "[foot-GPT Technical Staff, 2026 - Mon guide]"

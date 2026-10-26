@@ -29,7 +29,7 @@ class MarkdownParser:
         meta, body_text = self._extract_yaml_frontmatter(text)
         title = meta.get("title", doc_id.replace("_", " ").title())
         source_url = meta.get("source_url", f"file://{md_path.resolve()}")
-        year = meta.get("year")
+        year = int(meta["year"]) if str(meta.get("year", "")).isdigit() else None
         if not year and "20" in source_url:
             year_match = re.search(r"/20(\d{2})/", source_url)
             if year_match:

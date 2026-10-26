@@ -2,6 +2,7 @@
 title: "High-Level Guide 1: The 4 Phases of Play & Fundamental Operational Principles"
 category: "High-Level Tactical Theory"
 level: "Framework / Routing"
+year: 2026
 ---
 
 # High-Level Guide 1: The 4 Phases of Play & Fundamental Operational Principles

@@ -2,6 +2,7 @@
 title: "High-Level Guide 3: Tactical Periodization & Complex Systems"
 category: "High-Level Tactical Theory"
 level: "Framework / Routing"
+year: 2026
 ---
 
 # High-Level Guide 3: Tactical Periodization & Complex Systems
