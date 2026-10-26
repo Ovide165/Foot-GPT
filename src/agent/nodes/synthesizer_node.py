@@ -77,8 +77,16 @@ def synthesizer_node(state: TacticalAgentState) -> Dict[str, Any]:
                 )
 
     # 2. Rich formatting of top 4 RAG theory chunks with formal citations
+    sources_sufficient = state.get("sources_sufficient")
+    if sources_sufficient is None:
+        sources_sufficient = bool(retrieved_chunks)
     rag_text = ""
-    for idx, c in enumerate(retrieved_chunks[:4], 1):
+    if not sources_sufficient:
+        rag_text = (
+            "NO RELEVANT SOURCE FOUND: no excerpt of the knowledge base is relevant enough to this "
+            "question. Do not cite any source in Part 2; state this limitation explicitly.\n"
+        )
+    for idx, c in enumerate(retrieved_chunks[:4] if sources_sufficient else [], 1):
         snippet = c.get('content', '')[:800].strip().replace("\n", " ") + "..."
         rag_text += (
             f"- Excerpt {idx} | Citation: {c.get('citation', '')}\n"
@@ -109,13 +117,23 @@ def synthesizer_node(state: TacticalAgentState) -> Dict[str, Any]:
     except Exception as e:
         # Fallback de secours structuré purement métier (zéro jargon technique)
         match_title = match_facts.match_name if match_facts else "Match Analysis"
+        if retrieved_chunks and sources_sufficient:
+            # Seules les sources effectivement recuperees peuvent etre citees
+            part2 = "\n".join(
+                f"- Theoretical reference available for this analysis: {c.get('citation', '')}"
+                for c in retrieved_chunks[:2]
+            )
+        else:
+            part2 = (
+                "- No sufficiently relevant source in the knowledge base for this question; "
+                "the diagnosis above relies on match data only."
+            )
         draft = (
             f"### Part 1: Tactical Diagnosis & Identified Vulnerabilities\n"
             f"- Structured match event stream diagnosis for {match_title}: High-pressing organization and territorial control.\n"
             f"- Tactical phase transition analysis based on recorded StatsBomb spatiotemporal events.\n\n"
             f"### Part 2: Tactical Principles & Theoretical Grounding\n"
-            f"- Rest-defense structures and half-space compactness [Spielverlagerung Editorial Staff, 2014 - The Half-Spaces].\n"
-            f"- Structural pass analysis and counter-pressing triggers [Bauer & Anzer, 2026 - Structural Pass Analysis].\n\n"
+            f"{part2}\n\n"
             f"### Part 3: Prescriptions & Training Drills (UEFA Pro Standard)\n"
             f"- Drill 1: Positional Play & Axial Protection (45x35m, 6v4 + 2 floaters).\n"
             f"- Drill 2: Defensive Transition Recovery (Box-to-box, 7v5 + 2 outlets)."

@@ -68,7 +68,8 @@ STRICT FORMAT RULES:
 
    ### Part 2: Tactical Principles & Theoretical Grounding
    - GOLDEN ANCHORING RULE: Each theoretical principle MUST START with a concrete match fact (minute, player name, zone, or measured metric from MatchFacts) BEFORE explaining the theoretical mechanism and citing the exact reference `[Author, Year - Title]`.
-   - Provide 2 theoretical principles with explicit formal citations from `THEORETICAL_KNOWLEDGE`.
+   - Provide UP TO 2 theoretical principles, and ONLY those genuinely supported by an excerpt of `THEORETICAL_KNOWLEDGE`. Cite each with the exact `[Author, Year - Title]` string given for that excerpt; never cite a source that is not listed there and never invent one. One well-supported principle is better than two forced ones.
+   - INSUFFICIENT SOURCES: if `THEORETICAL_KNOWLEDGE` says that no relevant source was found, or if none of its excerpts actually covers the tactical topic at hand, do NOT cite anything and do NOT present general theory as sourced. Write explicitly in this section: "No sufficiently relevant source in the knowledge base for this question; the diagnosis above relies on match data only." You may then add at most one clearly unsourced observation labelled as such.
 
    ### Part 3: Prescriptions & Training Drills (UEFA Pro Standard)
    - Provide 2 professional training drill cards adhering STRICTLY to this format:
