@@ -19,6 +19,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from src import config
 from src.rag import chunker
 from src.rag.bm25_retriever import BM25Retriever
+from src.rag.hybrid_retriever import HybridRetriever
 from src.rag.reranker import CrossEncoderReranker
 from src.rag.vector_store import VectorStoreManager
 
@@ -60,6 +61,7 @@ def main(out_path: str) -> None:
     reranker = CrossEncoderReranker()
     assert reranker.model is not None, "Cross-encoder indisponible : scores non representatifs"
 
+    pipeline = HybridRetriever(bm25=bm25, vector_store=vs, reranker=reranker)
     tokenizer = vs.embedding_fn._model.tokenizer  # tokenizer MiniLM
     results: List[Dict[str, Any]] = []
     for q in queries:
@@ -76,7 +78,18 @@ def main(out_path: str) -> None:
         candidates = [cmap[k] for k in order]
         reranked = reranker.rerank(q["query"], candidates, top_n=len(candidates))
 
+        # Pipeline reel (filtre de pertinence inclus) ; absent avant la correction : 4 chunks toujours
+        detailed = getattr(pipeline, "search_detailed", None)
+        outcome = detailed(q["query"]) if detailed else None
+        pipeline_result = (
+            {"sources_sufficient": outcome.sources_sufficient, "n_kept": len(outcome.chunks),
+             "kept_ids": [c["chunk_id"] for c in outcome.chunks]}
+            if outcome else {"sources_sufficient": None, "n_kept": min(4, len(reranked)),
+                             "kept_ids": [c.chunk_id for c, _ in reranked[:4]]}
+        )
+
         results.append({
+            "pipeline": pipeline_result,
             "id": q["id"], "type": q["type"], "query": q["query"],
             "bm25_top": [brief(c, s) for c, s in sparse],
             "dense_top": [brief(c, s) for c, s in dense],
