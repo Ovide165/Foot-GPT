@@ -7,7 +7,7 @@ from PIL import Image
 import streamlit as st
 
 import importlib
-from src.app_service import analyze
+from src.app_service import analyze, verdict_view
 from src.cache.semantic_cache import GLOBAL_SEMANTIC_CACHE
 from src.data_mining.db_connection import ReadOnlyDBConnection
 from src.data_mining.match_miner import MatchMiner
@@ -26,6 +26,7 @@ from src.ui.components.report_renderer import (
     render_critical_events_timeline,
     render_facts_table,
     render_structured_report,
+    render_verdict_panel,
 )
 
 # Chargement des variables d'environnement
@@ -529,6 +530,7 @@ with tab_coach:
         with col_report:
             if st.session_state.current_result and st.session_state.current_result.get("final_report"):
                 res = st.session_state.current_result
+                render_verdict_panel(verdict_view(res))
                 render_structured_report(res["final_report"])
                 render_citations_panel(res.get("retrieved_chunks") or [])
             else:

@@ -9,6 +9,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 
+from src.app_service import faithfulness_label
 from src.data_mining.db_connection import ReadOnlyDBConnection
 from src.evaluation.benchmark_comparison import run_benchmark_for_provider
 from src.rag.vector_store import VectorStoreManager
@@ -25,8 +26,7 @@ def render_telemetry_metrics(telemetry: Dict[str, Any]) -> None:
         total_lat = telemetry.get("total_pipeline_latency_ms", 0)
         st.metric("TOTAL LATENCY", f"{total_lat:.0f} ms")
     with c2:
-        faith = telemetry.get("critic_faithfulness_score", 0.95)
-        st.metric("FAITHFULNESS (CRITIC)", f"{faith * 100:.0f}%")
+        st.metric("FAITHFULNESS (CRITIC)", faithfulness_label(telemetry))
     with c3:
         sql_lat = telemetry.get("sql_miner_latency_ms", 0)
         st.metric("SQL MINER LATENCY", f"{sql_lat:.1f} ms")
@@ -136,7 +136,7 @@ def render_model_benchmark_panel() -> None:
 
             mc1, mc2, mc3 = st.columns(3)
             mc1.metric("AVERAGE LATENCY", f"{summary['avg_latency_ms']} ms")
-            mc2.metric("CRITIC FAITHFULNESS", f"{summary['avg_faithfulness'] * 100:.0f}%")
+            mc2.metric("CRITIC FAITHFULNESS", faithfulness_label({"critic_faithfulness_score": summary["avg_faithfulness"]}))
             mc3.metric("3-PART COMPLIANCE", f"{summary['volets_compliance_pct']}%")
 
             df_det = pd.DataFrame(summary["details"])

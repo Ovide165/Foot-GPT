@@ -38,6 +38,7 @@ def run_evaluation_suite() -> Dict[str, Any]:
     """
     results: List[Dict[str, Any]] = []
     total_latency = 0.0
+    scored_count = 0
     total_faithfulness = 0.0
     passed_count = 0
 
@@ -55,8 +56,10 @@ def run_evaluation_suite() -> Dict[str, Any]:
 
         report = state.get("final_report", "")
         verdict = state.get("critic_verdict")
-        faithfulness = verdict.faithfulness_score if verdict else 0.95
-        total_faithfulness += faithfulness
+        faithfulness = verdict.faithfulness_score if verdict else None  # pas de valeur par defaut inventee
+        if faithfulness is not None:
+            scored_count += 1
+            total_faithfulness += faithfulness
 
         has_volets = (
             "Volet 1" in report or "Part 1" in report or "Diagnostic" in report
@@ -66,7 +69,7 @@ def run_evaluation_suite() -> Dict[str, Any]:
             "Volet 3" in report or "Part 3" in report or "Exercice" in report or "Drill" in report
         )
 
-        passed = has_volets and (faithfulness >= 0.85)
+        passed = has_volets and faithfulness is not None and faithfulness >= 0.85
         if passed:
             passed_count += 1
 
@@ -86,7 +89,7 @@ def run_evaluation_suite() -> Dict[str, Any]:
         "passed_queries": passed_count,
         "pass_rate_pct": round((passed_count / n) * 100, 1),
         "avg_latency_ms": round(total_latency / n, 1),
-        "avg_faithfulness": round(total_faithfulness / n, 2),
+        "avg_faithfulness": round(total_faithfulness / scored_count, 2) if scored_count else None,
         "details": results,
     }
 

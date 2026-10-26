@@ -109,3 +109,50 @@ def test_global_and_window_reports_do_not_share_cache_entries(cache):
     analyze("q", 1, (0, 90), is_global_view=True, cache=cache, runner=runner)
     analyze("q", 1, (0, 90), is_global_view=False, cache=cache, runner=runner)
     assert len(calls) == 2
+
+
+from src.app_service import NOT_EVALUATED, faithfulness_label, verdict_view
+
+
+def test_pass_verdict_view_shows_score():
+    view = verdict_view(result("PASS"))
+    assert view["status"] == "passed"
+    assert "PASS" in view["headline"]
+    assert view["faithfulness"] == "97%"
+
+
+def test_report_served_after_failures_carries_a_clear_warning_and_anomalies():
+    failed = {**result("FAIL"), "iteration_count": 2,
+              "execution_telemetry": {"critic_faithfulness_score": 0.4}}
+    view = verdict_view(failed)
+    assert view["status"] == "failed_after_retries"
+    assert view["headline"].startswith("WARNING")
+    assert "FAIL after 2 attempts" in view["headline"]
+    assert view["anomalies"] == ["numerical_hallucination: Use 6 shots"]
+    assert view["faithfulness"] == "40%"
+
+
+def test_missing_verdict_is_not_evaluated():
+    view = verdict_view({"final_report": "x"})
+    assert view["status"] == "not_evaluated"
+    assert view["faithfulness"] == NOT_EVALUATED
+
+
+def test_missing_faithfulness_has_no_default_value():
+    assert faithfulness_label({}) == NOT_EVALUATED
+    assert faithfulness_label({"critic_faithfulness_score": None}) == NOT_EVALUATED
+    assert faithfulness_label({"critic_faithfulness_score": 0.0}) == "0%"   # 0 est une vraie note
+    assert faithfulness_label({"execution_telemetry": {"critic_faithfulness_score": 0.5}}) == "50%"
+
+
+def test_no_hardcoded_faithfulness_default_in_ui_or_evaluation():
+    root = Path(__file__).resolve().parent.parent
+    for name in ("src/ui/components/admin_dashboard.py", "src/evaluation/ragas_eval.py",
+                 "src/evaluation/benchmark_comparison.py"):
+        assert "else 0.95" not in (root / name).read_text(encoding="utf-8"), name
+        assert "faithfulness_score\", 0.95" not in (root / name).read_text(encoding="utf-8"), name
+
+
+def test_app_displays_the_verdict_panel():
+    source = (Path(__file__).resolve().parent.parent / "app.py").read_text(encoding="utf-8")
+    assert "render_verdict_panel(verdict_view(res))" in source
