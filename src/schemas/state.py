@@ -39,6 +39,8 @@ class TacticalAgentState(TypedDict):
     
     # 4. Sortie Nœud 2B (Hybrid RAG)
     retrieved_chunks: Optional[List[Dict[str, Any]]]
+    # False si aucun chunk n'atteint RERANK_MIN_SCORE : le rapport ne doit alors citer aucune source
+    sources_sufficient: Optional[bool]
     
     # 5. Sortie Nœud 3 (Synthesizer)
     draft_report: Optional[str]

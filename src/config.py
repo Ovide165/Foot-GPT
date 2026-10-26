@@ -26,6 +26,14 @@ TOP_K_DENSE = 15
 TOP_K_RERANKED = 4
 RRF_K = 60  # Constante de Reciprocal Rank Fusion
 
+# Seuil de pertinence du cross-encoder (logit brut de ms-marco-MiniLM-L-6-v2).
+# Les chunks dont le score de reranking est inferieur sont ecartes ; si aucun ne passe,
+# le noeud RAG signale `sources_sufficient=False` et le rapport doit l'indiquer.
+# Calibration (eval/results_before.json, 15 requetes) : meilleurs chunks hors sujet <= -5.2,
+# 48 chunks du top 4 des requetes en corpus >= 2.5. 0.0 est la frontiere naturelle du logit
+# (sigmoid = 0.5) et se situe au milieu de cet ecart. Voir eval/RAPPORT_CORRECTIONS.md.
+RERANK_MIN_SCORE = 0.0
+
 # Modèles par défaut
 DENSE_EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 RERANKER_MODEL = "cross-encoder/ms-marco-MiniLM-L-6-v2"
