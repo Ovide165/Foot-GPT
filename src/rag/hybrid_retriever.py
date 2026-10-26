@@ -51,11 +51,10 @@ class HybridRetriever:
         top_k_dense: int = TOP_K_DENSE,
         top_n_final: int = TOP_K_RERANKED,
         min_score: Optional[float] = RERANK_MIN_SCORE,
-        rerank_query: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
         """Recherche hybride filtrée par pertinence ; renvoie uniquement les chunks retenus."""
         return self.search_detailed(
-            query, top_k_sparse, top_k_dense, top_n_final, min_score, rerank_query
+            query, top_k_sparse, top_k_dense, top_n_final, min_score
         ).chunks
 
     def search_detailed(
@@ -65,7 +64,6 @@ class HybridRetriever:
         top_k_dense: int = TOP_K_DENSE,
         top_n_final: int = TOP_K_RERANKED,
         min_score: Optional[float] = RERANK_MIN_SCORE,
-        rerank_query: Optional[str] = None,
     ) -> SearchOutcome:
         """
         Exécute la recherche hybride complète :
@@ -75,10 +73,6 @@ class HybridRetriever:
         4. Re-ranking Cross-Encoder
         5. Filtre de pertinence (score de reranking >= min_score)
         6. Retourne les métadonnées et textes formatés
-
-        `rerank_query` permet de faire scorer le cross-encoder (entraîné sur de l'anglais) sur une
-        requête différente de celle des deux retrievers, par ex. sans la question brute du coach
-        quand elle est en français ; par défaut, la même requête est utilisée partout.
 
         Le filtre n'est appliqué que si le cross-encoder est réellement chargé : le repli
         heuristique (1/rang) n'a pas la même échelle de score et ne permet pas de juger.
@@ -113,7 +107,7 @@ class HybridRetriever:
         candidates = [chunk_map[cid] for cid in sorted_cids[: (top_k_sparse + top_k_dense)]]
 
         # 4. Re-ranking Cross-Encoder sur les candidats fusionnés
-        reranked = self.reranker.rerank(rerank_query or query, candidates, top_n=top_n_final)
+        reranked = self.reranker.rerank(query, candidates, top_n=top_n_final)
 
         # 5. Filtre de pertinence
         filter_active = min_score is not None and self.reranker.model is not None

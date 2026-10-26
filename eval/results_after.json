@@ -5826,11 +5826,6 @@
           "score": 0.1316
         },
         {
-          "chunk_id": "tactics_dismarking_methods_c17",
-          "citation": "[Spielverlagerung Editorial Staff, 2017 - Tactical Theory: the various methods of dismarking]",
-          "score": 0.1316
-        },
-        {
           "chunk_id": "dandrea_2025_high_performance_passing_networks_p10_c1",
           "citation": "[A. D'Andrea, M. De Domenico, F. Radicchi, 2025 - Identification and Optimization of High-Performance Passing Networks in Football]",
           "score": 0.1297
@@ -5846,11 +5841,6 @@
           "score": 0.1265
         },
         {
-          "chunk_id": "tactics_juego_de_posicion_c4",
-          "citation": "[Spielverlagerung Editorial Staff, 2014 - Juego de Posición under Pep Guardiola]",
-          "score": 0.1237
-        },
-        {
           "chunk_id": "tactics_juego_de_posicion_c72",
           "citation": "[Spielverlagerung Editorial Staff, 2014 - Juego de Posición under Pep Guardiola]",
           "score": 0.1216
@@ -5859,14 +5849,19 @@
           "chunk_id": "dandrea_2025_high_performance_passing_networks_p2_c2",
           "citation": "[A. D'Andrea, M. De Domenico, F. Radicchi, 2025 - Identification and Optimization of High-Performance Passing Networks in Football]",
           "score": 0.1213
+        },
+        {
+          "chunk_id": "tactics_juego_de_posicion_c44",
+          "citation": "[Spielverlagerung Editorial Staff, 2014 - Juego de Posición under Pep Guardiola]",
+          "score": 0.1212
+        },
+        {
+          "chunk_id": "tactics_juego_de_posicion_c70",
+          "citation": "[Spielverlagerung Editorial Staff, 2014 - Juego de Posición under Pep Guardiola]",
+          "score": 0.1194
         }
       ],
       "rrf_order": [
-        {
-          "chunk_id": "tactics_dismarking_methods_c17",
-          "citation": "[Spielverlagerung Editorial Staff, 2017 - Tactical Theory: the various methods of dismarking]",
-          "score": 0.0292
-        },
         {
           "chunk_id": "tactics_counter_or_gegenpressing_c4",
           "citation": "[Spielverlagerung Editorial Staff, 2014 - Counter- or Gegenpressing]",
@@ -5938,6 +5933,11 @@
           "score": 0.0149
         },
         {
+          "chunk_id": "tactics_dismarking_methods_c17",
+          "citation": "[Spielverlagerung Editorial Staff, 2017 - Tactical Theory: the various methods of dismarking]",
+          "score": 0.0147
+        },
+        {
           "chunk_id": "tactics_juego_de_posicion_c8",
           "citation": "[Spielverlagerung Editorial Staff, 2014 - Juego de Posición under Pep Guardiola]",
           "score": 0.0147
@@ -5948,13 +5948,18 @@
           "score": 0.0145
         },
         {
+          "chunk_id": "dandrea_2025_high_performance_passing_networks_p10_c1",
+          "citation": "[A. D'Andrea, M. De Domenico, F. Radicchi, 2025 - Identification and Optimization of High-Performance Passing Networks in Football]",
+          "score": 0.0145
+        },
+        {
           "chunk_id": "tactics_juego_de_posicion_c3",
           "citation": "[Spielverlagerung Editorial Staff, 2014 - Juego de Posición under Pep Guardiola]",
           "score": 0.0143
         },
         {
-          "chunk_id": "dandrea_2025_high_performance_passing_networks_p10_c1",
-          "citation": "[A. D'Andrea, M. De Domenico, F. Radicchi, 2025 - Identification and Optimization of High-Performance Passing Networks in Football]",
+          "chunk_id": "pena_2012_network_theory_football_p4_c5",
+          "citation": "[Javier López Peña, Hugo Touchette, 2012 - A Network Theory Analysis of Football Strategies]",
           "score": 0.0143
         },
         {
@@ -5963,8 +5968,8 @@
           "score": 0.0141
         },
         {
-          "chunk_id": "pena_2012_network_theory_football_p4_c5",
-          "citation": "[Javier López Peña, Hugo Touchette, 2012 - A Network Theory Analysis of Football Strategies]",
+          "chunk_id": "dandrea_2025_high_performance_passing_networks_p14_c2",
+          "citation": "[A. D'Andrea, M. De Domenico, F. Radicchi, 2025 - Identification and Optimization of High-Performance Passing Networks in Football]",
           "score": 0.0141
         },
         {
@@ -5973,8 +5978,8 @@
           "score": 0.0139
         },
         {
-          "chunk_id": "dandrea_2025_high_performance_passing_networks_p14_c2",
-          "citation": "[A. D'Andrea, M. De Domenico, F. Radicchi, 2025 - Identification and Optimization of High-Performance Passing Networks in Football]",
+          "chunk_id": "tactics_juego_de_posicion_c72",
+          "citation": "[Spielverlagerung Editorial Staff, 2014 - Juego de Posición under Pep Guardiola]",
           "score": 0.0139
         },
         {
@@ -5983,8 +5988,8 @@
           "score": 0.0137
         },
         {
-          "chunk_id": "tactics_juego_de_posicion_c4",
-          "citation": "[Spielverlagerung Editorial Staff, 2014 - Juego de Posición under Pep Guardiola]",
+          "chunk_id": "dandrea_2025_high_performance_passing_networks_p2_c2",
+          "citation": "[A. D'Andrea, M. De Domenico, F. Radicchi, 2025 - Identification and Optimization of High-Performance Passing Networks in Football]",
           "score": 0.0137
         },
         {
@@ -5993,7 +5998,7 @@
           "score": 0.0135
         },
         {
-          "chunk_id": "tactics_juego_de_posicion_c72",
+          "chunk_id": "tactics_juego_de_posicion_c44",
           "citation": "[Spielverlagerung Editorial Staff, 2014 - Juego de Posición under Pep Guardiola]",
           "score": 0.0135
         },
@@ -6003,8 +6008,8 @@
           "score": 0.0133
         },
         {
-          "chunk_id": "dandrea_2025_high_performance_passing_networks_p2_c2",
-          "citation": "[A. D'Andrea, M. De Domenico, F. Radicchi, 2025 - Identification and Optimization of High-Performance Passing Networks in Football]",
+          "chunk_id": "tactics_juego_de_posicion_c70",
+          "citation": "[Spielverlagerung Editorial Staff, 2014 - Juego de Posición under Pep Guardiola]",
           "score": 0.0133
         }
       ],
@@ -6060,6 +6065,11 @@
           "score": -11.1762
         },
         {
+          "chunk_id": "tactics_juego_de_posicion_c70",
+          "citation": "[Spielverlagerung Editorial Staff, 2014 - Juego de Posición under Pep Guardiola]",
+          "score": -11.182
+        },
+        {
           "chunk_id": "tactics_juego_de_posicion_c41",
           "citation": "[Spielverlagerung Editorial Staff, 2014 - Juego de Posición under Pep Guardiola]",
           "score": -11.1827
@@ -6085,6 +6095,11 @@
           "score": -11.1889
         },
         {
+          "chunk_id": "tactics_juego_de_posicion_c44",
+          "citation": "[Spielverlagerung Editorial Staff, 2014 - Juego de Posición under Pep Guardiola]",
+          "score": -11.1904
+        },
+        {
           "chunk_id": "dandrea_2025_high_performance_passing_networks_p14_c2",
           "citation": "[A. D'Andrea, M. De Domenico, F. Radicchi, 2025 - Identification and Optimization of High-Performance Passing Networks in Football]",
           "score": -11.1915
@@ -6108,11 +6123,6 @@
           "chunk_id": "bauer_2026_structural_pass_analysis_tracking_p10_c1",
           "citation": "[P. Bauer, G. Anzer, U. Brefeld, 2026 - Structural Pass Analysis in Football: Learning Pass Archetypes and Tactical Impact from Spatio-Temporal Tracking Data]",
           "score": -11.2157
-        },
-        {
-          "chunk_id": "tactics_juego_de_posicion_c4",
-          "citation": "[Spielverlagerung Editorial Staff, 2014 - Juego de Posición under Pep Guardiola]",
-          "score": -11.2237
         },
         {
           "chunk_id": "dandrea_2025_high_performance_passing_networks_p22_c1",

@@ -76,9 +76,29 @@ def test_min_score_none_disables_filter():
     assert len(r.search("q", min_score=None)) == 3
 
 
-def test_rerank_query_overrides_query_for_cross_encoder_only():
+def test_reranker_scores_the_same_query_as_the_retrievers():
     r = _retriever({"a": 1.0, "b": 1.0, "c": 1.0})
-    r.search("question brute en francais", rerank_query="english terms")
-    assert r.reranker.last_query == "english terms"
-    r.search("only query")
-    assert r.reranker.last_query == "only query"
+    r.search("enriched query")
+    assert r.reranker.last_query == "enriched query"
+
+
+def test_deep_rag_node_reranks_on_the_full_enriched_query(monkeypatch):
+    import sys
+
+    import src.agent.nodes.deep_rag_node  # noqa: F401  (le paquet reexporte la fonction du meme nom)
+    from src.schemas.router import TacticalPlan
+
+    node_module = sys.modules["src.agent.nodes.deep_rag_node"]
+    retriever = _retriever({"a": 2.0, "b": 1.0, "c": 3.0})
+    monkeypatch.setattr(node_module, "get_hybrid_retriever", lambda: retriever)
+    plan = TacticalPlan.model_construct(
+        theoretical_topics=["Rest-Defense"], spatial_zones=["zone_14"],
+    )
+    out = node_module.deep_rag_node({
+        "coach_query": "Why did France collapse?", "tactical_plan": plan,
+        "match_facts": None, "execution_telemetry": {},
+    })
+    enriched = out["execution_telemetry"]["rag_enriched_query"]
+    assert enriched == "Why did France collapse? Rest-Defense zone 14"
+    assert retriever.reranker.last_query == enriched
+    assert out["sources_sufficient"] is True

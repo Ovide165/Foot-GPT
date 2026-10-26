@@ -2,6 +2,10 @@
 
 Assistant IA d'analyse tactique de football. Il combine des données d'événements StatsBomb (SQL déterministe) et une base de connaissances tactique (RAG hybride), orchestrées par un graphe **LangGraph**, pour produire des rapports d'analyse structurés, vérifiés et validés par un humain.
 
+## Langue
+
+foot-GPT fonctionne **uniquement en anglais** : les questions du coach, le corpus documentaire (articles, papiers, guides) et les rapports générés. Le cross-encoder de re-ranking (`ms-marco-MiniLM-L-6-v2`) et le modèle d'embedding (`all-MiniLM-L6-v2`) sont entraînés sur de l'anglais ; une question en français dégrade fortement les scores de pertinence et peut faire écarter des sources pertinentes.
+
 ## Architecture
 
 ```
