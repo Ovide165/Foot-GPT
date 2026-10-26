@@ -55,7 +55,7 @@ def critic_node(state: TacticalAgentState) -> Dict[str, Any]:
 
     facts_summary = match_facts.model_dump_json() if match_facts else "{}"
     chunks_summary = "\n".join(
-        [f"- Citation: {c.get('citation')}\n  Content: {c.get('content', '')[:300].strip()}..." for c in retrieved_chunks]
+        [f"- Citation: {c.get('citation')}\n  Content: {c.get('content', '').strip()}" for c in retrieved_chunks]
     ) if retrieved_chunks else "[]"
 
     messages = [

@@ -87,7 +87,7 @@ def synthesizer_node(state: TacticalAgentState) -> Dict[str, Any]:
             "question. Do not cite any source in Part 2; state this limitation explicitly.\n"
         )
     for idx, c in enumerate(retrieved_chunks[:4] if sources_sufficient else [], 1):
-        snippet = c.get('content', '')[:800].strip().replace("\n", " ") + "..."
+        snippet = c.get('content', '').strip().replace("\n", " ")
         rag_text += (
             f"- Excerpt {idx} | Citation: {c.get('citation', '')}\n"
             f"  Tactical Principle: {snippet}\n"

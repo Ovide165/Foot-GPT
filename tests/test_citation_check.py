@@ -105,3 +105,22 @@ def test_unanchored_report_cannot_pass(monkeypatch):
 def test_critic_prompt_and_schema_agree_on_is_anchored():
     assert "is_anchored" in CRITIC_SYSTEM_PROMPT
     assert "is_anchored" in VerificationVerdict.model_fields
+
+
+def test_critic_receives_full_chunk_without_truncation(monkeypatch):
+    seen = {}
+
+    class _Spy(MockChatModel):
+        def with_structured_output(self, schema):
+            outer = super().with_structured_output(schema)
+
+            class _Runner:
+                def invoke(self, messages):
+                    seen["prompt"] = messages[1].content
+                    return outer.invoke(messages)
+            return _Runner()
+
+    monkeypatch.setattr(LLMFactory, "get_fast_model", staticmethod(lambda **kw: _Spy()))
+    chunk = {"citation": ALLOWED[0], "content": "debut " + "mot " * 1000 + "FIN_DU_CHUNK"}
+    critic_module.critic_node({"draft_report": "r", "match_facts": None, "retrieved_chunks": [chunk], "execution_telemetry": {}})
+    assert "FIN_DU_CHUNK" in seen["prompt"]

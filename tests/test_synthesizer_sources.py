@@ -70,3 +70,9 @@ def test_fallback_draft_states_limitation_without_sources(monkeypatch):
     out, _ = _run(monkeypatch, {"retrieved_chunks": [], "sources_sufficient": False}, fail=True)
     assert "No sufficiently relevant source" in out["draft_report"]
     assert "[" not in out["draft_report"].split("### Part 2")[1].split("### Part 3")[0]
+
+
+def test_synthesizer_receives_full_chunk_without_truncation(monkeypatch):
+    long_chunk = {**_chunk(), "content": "start " + "mot " * 1000 + "FIN_DU_CHUNK"}
+    _, prompt = _run(monkeypatch, {"retrieved_chunks": [long_chunk], "sources_sufficient": True})
+    assert "FIN_DU_CHUNK" in prompt
