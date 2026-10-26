@@ -40,3 +40,25 @@ def test_semantic_cache_hit_and_miss():
     q3 = "Quelle est la météo à Buenos Aires ?"
     miss_topic = cache.get(q3, match_id)
     assert miss_topic is None
+
+
+def test_cache_hit_reports_measured_latency_not_a_constant(monkeypatch):
+    """total_pipeline_latency_ms doit refleter la duree reelle du get(), pas une valeur codee en dur."""
+    import time
+
+    import numpy as np
+
+    cache = SemanticCache()
+    vector = np.array([1.0, 0.0])
+
+    def slow_embedding(text):
+        time.sleep(0.05)  # simule le calcul d'embedding de la requete
+        return vector
+
+    monkeypatch.setattr(cache, "_get_embedding", slow_embedding)
+    cache.set("q", 1, "report", "{}", {"total_pipeline_latency_ms": 5000})
+    hit = cache.get("q", 1)
+    latency = hit["execution_telemetry"]["total_pipeline_latency_ms"]
+    assert latency >= 50          # inclut les 50 ms de l'embedding
+    assert latency != 8.5
+    assert latency < 5000         # et n'est pas la latence du pipeline d'origine
